@@ -1,0 +1,3 @@
+rootProject.name = 'segmentChainFramework'
+include 'java'
+
