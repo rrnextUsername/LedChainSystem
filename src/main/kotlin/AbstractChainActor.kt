@@ -11,8 +11,8 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
     protected abstract suspend fun stopReceived()
     protected abstract suspend fun onReceived()
     protected abstract suspend fun offReceived()
+    protected abstract suspend fun clickReceived(msgContent: Int)
 
-    abstract fun start()
     protected abstract suspend fun applLogic()
 
 

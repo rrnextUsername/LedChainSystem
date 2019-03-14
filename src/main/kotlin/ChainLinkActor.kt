@@ -22,7 +22,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
         }
     }
 
-    private suspend fun clickReceived(msgContent: Int) {
+    override suspend fun clickReceived(msgContent: Int) {
         println(msgContent)
         if (msgContent % 2 == 0) {
             stopReceived()
@@ -88,15 +88,6 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
                 next!!.send(MsgUtil.offMsg(name, "next"))
             }
 
-        }
-    }
-
-
-    //cheating. se start chiamasse solo autoMsg sarebbe di tipo suspend, e basically non potrebbe essere chiamata da java
-    //incapsularlo in un GlobalScope lo infila in una coroutine che nasce e muore nel metodo, e che non deve gestire suspend
-    override fun start() {
-        GlobalScope.launch {
-            autoMsg(MsgUtil.startMsg(name, name))
         }
     }
 
