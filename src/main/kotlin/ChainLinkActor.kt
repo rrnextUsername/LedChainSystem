@@ -18,6 +18,16 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
             "stop" -> stopReceived()
             "on" -> onReceived()
             "off" -> offReceived()
+            "click" -> clickReceived(msg.msgContent().toInt())
+        }
+    }
+
+    private suspend fun clickReceived(msgContent: Int) {
+        println(msgContent)
+        if (msgContent % 2 == 0) {
+            stopReceived()
+        } else {
+            startReceived()
         }
     }
 
@@ -46,8 +56,11 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
         doBlink = false
         next!!.send(MsgUtil.stopMsg(name, "next"))
-        prev!!.send(MsgUtil.stopMsg(name, "prev"))
+        if (prev != null) {
+            prev!!.send(MsgUtil.stopMsg(name, "prev"))
+        }
 
+        ledModel!!.turnOn()
     }
 
     override suspend fun onReceived() {
@@ -71,7 +84,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
             if (doBlink) {
                 ledModel?.turnOn()
-                println("::::::::::$name::coroutine::    led ${ledModel?.state}, notifying forward    ::")
+                println("::::::::::$name::coroutine::    led ${ledModel?.state}, blink $doBlink, notifying forward    ::")
                 next!!.send(MsgUtil.offMsg(name, "next"))
             }
 
