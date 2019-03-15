@@ -73,14 +73,12 @@ public class JavaMain {
         actor5.setPrev(actor4.getChannel());
 
         //--------------set button observer---------------
-        ButtonModel buttonModel = ButtonModel.createButton("click me");
+        /*ButtonModel buttonModel = ButtonModel.createButton("click me");
         ButtonObserver buttonObserver = new ButtonObserver();
         buttonModel.addObserver(buttonObserver);
         ButtonAsGui.createButton("click me").addObserver(buttonModel);
 
         //--------------bind button observer to chain---------------
-        buttonObserver.setControl(actor4.getChannel());
-
-        System.out.println("test");
+        buttonObserver.setControl(actor4.getChannel());        */
     }
 }
