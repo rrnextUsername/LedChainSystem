@@ -19,10 +19,10 @@ public class JavaMain extends SegChainFramework {
         chainSystem.addConcreteButton(ButtonAsGui.createButton("click me"));
 
         chainSystem.addChainLink(new ChainLinkActor("seg1", 500), new LedSegmentAdapter("seg1", 20, 10));
-        chainSystem.addChainLink(new ChainLinkActor("seg2", 500), new LedSegmentAdapter("seg2", 20, 10, 300, 0));
-        chainSystem.addChainLink(new ChainLinkActor("seg3", 500), new LedSegmentAdapter("seg3", 20, 10, 600, 0));
-        chainSystem.addChainLink(new ChainLinkActor("seg4", 500), new LedSegmentAdapter("seg4", 20, 10, 900, 0));
-        chainSystem.addChainLink(new ChainLinkActor("seg5", 500), new LedSegmentAdapter("seg5", 20, 10, 1200, 0));
+        chainSystem.addChainLink(new ChainLinkActor("seg2", 500), new LedSegmentAdapter("seg2", 20, 10, 120, 0));
+        chainSystem.addChainLink(new ChainLinkActor("seg3", 500), new LedSegmentAdapter("seg3", 20, 10, 240, 0));
+        chainSystem.addChainLink(new ChainLinkActor("seg4", 500), new LedSegmentAdapter("seg4", 20, 10, 360, 0));
+        chainSystem.addChainLink(new ChainLinkActor("seg5", 500), new LedSegmentAdapter("seg5", 20, 10, 480, 0));
 
 
         Utils.delay(5000);
@@ -30,7 +30,7 @@ public class JavaMain extends SegChainFramework {
         for (int k = 1; k < 6; k++) {
             for (int i = 0; i < 5; i++) {
                 Utils.delay(800);
-                chainSystem.addChainLink(new ChainLinkActor("seg2", 500), new LedSegmentAdapter("seg2", 20, 10, i * 300, k * 100));
+                chainSystem.addChainLink(new ChainLinkActor("seg2", 500), new LedSegmentAdapter("seg2", 20, 10, i * 120, k * 100));
             }
         }
     }
