@@ -80,5 +80,7 @@ public class JavaMain {
 
         //--------------bind button observer to chain---------------
         buttonObserver.setControl(actor4.getChannel());
+
+        System.out.println("test");
     }
 }
