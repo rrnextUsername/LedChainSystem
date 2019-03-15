@@ -11,14 +11,41 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     var doBlink = false
     var doSendOff = false
 
+    var suspendedBlink: Boolean? = null
+
     override suspend fun actorBody(msg: ApplMessage) {
         when (msg.msgId()) {
             "start" -> startReceived(msg)
             "stop" -> stopReceived(msg)
+
+            "suspend" -> suspendReceived(msg)
+            "resume" -> resumeReceived(msg)
+
             "on" -> onReceived(msg)
             "off" -> offReceived(msg)
+
             "click" -> clickReceived(msg)
         }
+    }
+
+    private suspend fun suspendReceived(msg: ApplMessage) {
+        if (suspendedBlink != null)
+            return
+
+        suspendedBlink = doBlink
+        doBlink = false
+
+        prev!!.send(MsgUtil.suspendMsg(name, "prev"))
+    }
+
+    private suspend fun resumeReceived(msg: ApplMessage) {
+        if (suspendedBlink == null)
+            return
+
+        doBlink = suspendedBlink!!
+        suspendedBlink = null
+
+        prev!!.send(MsgUtil.resumeMsg(name, "prev"))
     }
 
     override suspend fun clickReceived(msg: ApplMessage) {
@@ -39,7 +66,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
         }
 
         doBlink = true
-        next!!.send(MsgUtil.startMsg(name, "next"))
+        //next!!.send(MsgUtil.startMsg(name, "next"))
         prev!!.send(MsgUtil.startMsg(name, "prev"))
 
         if (head) {
@@ -55,7 +82,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
         doBlink = false
         doSendOff = false
-        next!!.send(MsgUtil.stopMsg(name, "next"))
+        //next!!.send(MsgUtil.stopMsg(name, "next"))
         prev!!.send(MsgUtil.stopMsg(name, "prev"))
     }
 
@@ -74,6 +101,9 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     override suspend fun applLogic() {
+        if (!doBlink)
+            return
+
         turnOnLed()
         next!!.send(MsgUtil.onMsg(name, "next"))
 

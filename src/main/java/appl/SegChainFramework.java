@@ -10,6 +10,8 @@ import it.unibo.blsFramework.interfaces.IButtonModel;
 import it.unibo.blsFramework.interfaces.ILedObserver;
 import it.unibo.blsFramework.models.ButtonModel;
 import it.unibo.blsFramework.models.LedModel;
+import it.unibo.kactor.ApplMessage;
+import it.unibo.kactor.MsgUtil;
 import listener.ButtonObserver;
 
 import java.util.ArrayList;
@@ -67,15 +69,16 @@ public class SegChainFramework implements ISegChainFramework {
             buttonObserver.setControl(link.getChannel());
 
         } else {
-            /*if(chain.get(0).getClickCount()==0){//the chain hasn't started, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
+            if (chain.get(0).getClickCount() == 0) {//the chain hasn't started, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
                  addLink(link);
             }else {
-                MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.stoptMsg(),chain.get(0).getChannel());
+                MsgUtil.INSTANCE.forward(new ApplMessage("suspend", "dispatch", "main", "first", "suspend", "0"), chain.get(0).getChannel());
                 addLink(link);
-                MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.startMsg(),chain.get(0).getChannel());
-            }*/
+                MsgUtil.INSTANCE.forward(new ApplMessage("resume", "dispatch", "main", "first", "resume", "0"), chain.get(0).getChannel());
 
-            addLink(link);
+            }
+
+            //addLink(link);
         }
     }
 
