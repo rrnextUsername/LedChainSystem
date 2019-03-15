@@ -11,7 +11,9 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     var doBlink = false
     var doSendOff = false
 
-    var suspendedBlink: Boolean? = null
+    var suspendedBlink: Boolean = doBlink
+    var suspendedSendOff: Boolean = doSendOff
+    var isSuspended: Boolean = false
 
     override suspend fun actorBody(msg: ApplMessage) {
         when (msg.msgId()) {
@@ -29,24 +31,35 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     private suspend fun suspendReceived(msg: ApplMessage) {
-        if (suspendedBlink != null) {
-            println("$name: suspendedBlink is set, exiting")
+        if (isSuspended) {
+            println("$name: already suspended, exiting")
             return
         }
-        println("$name: suspendedBlink is not set, spreading")
+        println("$name: suspending")
 
         suspendedBlink = doBlink
         doBlink = false
+
+        suspendedSendOff = doSendOff
+        doSendOff = false
+
+        isSuspended = true
 
         prev!!.send(MsgUtil.suspendMsg(name, "prev"))
     }
 
     private suspend fun resumeReceived(msg: ApplMessage) {
-        if (suspendedBlink == null)
+        if (!isSuspended) {
+            println("$name: already resumed, exiting")
             return
+        }
+        println("$name: resuming")
 
-        doBlink = suspendedBlink!!
-        suspendedBlink = null
+        doBlink = suspendedBlink
+
+        doSendOff = suspendedSendOff
+
+        isSuspended = false
 
         prev!!.send(MsgUtil.resumeMsg(name, "prev"))
     }
