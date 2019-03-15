@@ -20,48 +20,11 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
             "start" -> startReceived(msg)
             "stop" -> stopReceived(msg)
 
-            "suspend" -> suspendReceived(msg)
-            "resume" -> resumeReceived(msg)
-
             "on" -> onReceived(msg)
             "off" -> offReceived(msg)
 
             "click" -> clickReceived(msg)
         }
-    }
-
-    private suspend fun suspendReceived(msg: ApplMessage) {
-        if (isSuspended) {
-            println("$name: already suspended, exiting")
-            return
-        }
-        println("$name: suspending")
-
-        suspendedBlink = doBlink
-        doBlink = false
-
-        suspendedSendOff = doSendOff
-        doSendOff = false
-
-        isSuspended = true
-
-        prev!!.send(MsgUtil.suspendMsg(name, "prev"))
-    }
-
-    private suspend fun resumeReceived(msg: ApplMessage) {
-        if (!isSuspended) {
-            println("$name: already resumed, exiting")
-            return
-        }
-        println("$name: resuming")
-
-        doBlink = suspendedBlink
-
-        doSendOff = suspendedSendOff
-
-        isSuspended = false
-
-        prev!!.send(MsgUtil.resumeMsg(name, "prev"))
     }
 
     override suspend fun clickReceived(msg: ApplMessage) {

@@ -1,5 +1,6 @@
 package appl;
 
+import applLogic.AbstractChainActor;
 import interfaces.IChainActor;
 import interfaces.ISegChainFramework;
 import it.unibo.bls.interfaces.ILed;
@@ -28,6 +29,7 @@ public class SegChainFramework implements ISegChainFramework {
     private ButtonObserver buttonObserver;
     private ButtonModel buttonModel;
     private IObservable concreteButton;
+    private IChainActor buttonControl;
 
 
     public SegChainFramework(String cmdName) {
@@ -66,21 +68,42 @@ public class SegChainFramework implements ISegChainFramework {
             //if the link is the first one to be added, add it to the list and connect it to the observer
             chain.add(link);
             link.setHead(true);
-            buttonObserver.setControl(link.getChannel());
+
+            buttonControl=link;
+            buttonObserver.setControl(buttonControl.getChannel());
 
         } else {
-            if (chain.get(0).getClickCount() == 0) {//the chain hasn't started, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
+            if (buttonControl.getClickCount() %2 == 0) {//the chain hasn't started or is stopped, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
                  addLink(link);
             }else {
-                MsgUtil.INSTANCE.forward(new ApplMessage("suspend", "dispatch", "main", "first", "suspend", "0"), chain.get(0).getChannel());
+                sendClick();
                 addLink(link);
-                Utils.delay(250);
-                MsgUtil.INSTANCE.forward(new ApplMessage("resume", "dispatch", "main", "first", "resume", "0"), chain.get(0).getChannel());
-
+                sendClick();
             }
-
-            //addLink(link);
         }
+    }
+
+    @Override
+    public void setButtonControl(IChainActor link) {
+        if (chain.isEmpty()) {
+            chain.add(link);
+
+            setControlLink(link);
+        } else {
+
+            if (buttonControl.getClickCount() % 2 == 0) {//the chain hasn't started or is stopped, i don't need to start/stop the system
+                setControlLink(link);
+            } else {
+                sendClick();
+                setControlLink(link);
+                sendClick();
+            }
+        }
+    }
+
+    private void setControlLink(IChainActor link){
+        buttonControl=link;
+        buttonObserver.setControl(buttonControl.getChannel());
     }
 
     private void addLink(IChainActor link) {
@@ -110,5 +133,9 @@ public class SegChainFramework implements ISegChainFramework {
     @Override
     public List<IChainActor> getChain() {
         return chain;
+    }
+
+    private void sendClick(){
+        MsgUtil.INSTANCE.forward(new ApplMessage("click", "dispatch", "main", "first", "click", "0"), buttonControl.getChannel());
     }
 }

@@ -10,6 +10,7 @@ public interface ISegChainFramework {
     void addConcreteButton(IObservable button);
 
     void addChainLink(IChainActor link, ILed concreteLed);
+    void setButtonControl(IChainActor buttonControl);
 
     IObservable getConcreteButton();
 

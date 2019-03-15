@@ -18,7 +18,9 @@ public class JavaMain extends SegChainFramework {
 
         chainSystem.addConcreteButton(ButtonAsGui.createButton("click me"));
 
+        //the first one is automatically set up for receiving button clicked messages
         chainSystem.addChainLink(new ChainLinkActor("seg1", 500), new LedSegmentAdapter("seg1", 20, 10));
+
         chainSystem.addChainLink(new ChainLinkActor("seg2", 500), new LedSegmentAdapter("seg2", 20, 10, 120, 0));
         chainSystem.addChainLink(new ChainLinkActor("seg3", 500), new LedSegmentAdapter("seg3", 20, 10, 240, 0));
         chainSystem.addChainLink(new ChainLinkActor("seg4", 500), new LedSegmentAdapter("seg4", 20, 10, 360, 0));
@@ -30,7 +32,18 @@ public class JavaMain extends SegChainFramework {
         for (int k = 1; k < 2; k++) {
             for (int i = 0; i < 5; i++) {
                 chainSystem.addChainLink(new ChainLinkActor("seg" + i + "" + k, 500), new LedSegmentAdapter("seg2", 20, 10, i * 120, k * 100));
-                Utils.delay(10000);
+                Utils.delay(2000);
+            }
+        }
+
+        //change the control link
+        chainSystem.setButtonControl(chainSystem.getChain().get(3));
+        System.out.println("-----------------------CONTROL LINK CHANGED----------------------------");
+
+        for (int k = 1; k < 2; k++) {
+            for (int i = 0; i < 5; i++) {
+                chainSystem.addChainLink(new ChainLinkActor("seg" + i + "" + k, 500), new LedSegmentAdapter("seg2", 20, 10, i * 120, k * 400));
+                Utils.delay(2000);
             }
         }
     }

@@ -23,32 +23,32 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName), IC
 
     protected abstract suspend fun applLogic()
 
-    protected fun MsgUtil.onMsg(sender: String, receiver: String): ApplMessage {
+    fun MsgUtil.onMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage("on", "dispatch", sender, receiver, "on", count.toString())
     }
 
-    protected fun MsgUtil.offMsg(sender: String, receiver: String): ApplMessage {
+    fun MsgUtil.offMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage("off", "dispatch", sender, receiver, "off", count.toString())
     }
 
-    protected fun MsgUtil.suspendMsg(sender: String, receiver: String): ApplMessage {
+    fun MsgUtil.suspendMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage("suspend", "dispatch", sender, receiver, "suspend", count.toString())
     }
 
-    protected fun MsgUtil.resumeMsg(sender: String, receiver: String): ApplMessage {
+    fun MsgUtil.resumeMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage("resume", "dispatch", sender, receiver, "resume", count.toString())
     }
 
-    protected fun MsgUtil.startMsg(sender: String, receiver: String): ApplMessage {
+    fun MsgUtil.startMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage("start", "dispatch", sender, receiver, "start", count.toString())
     }
 
-    protected fun MsgUtil.stopMsg(sender: String, receiver: String): ApplMessage {
+    fun MsgUtil.stopMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage("stop", "dispatch", sender, receiver, "stop", count.toString())
     }
