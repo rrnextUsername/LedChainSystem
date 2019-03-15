@@ -7,11 +7,11 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
 
     protected var ledModel: ILedModel? = null
 
-    protected abstract suspend fun startReceived()
-    protected abstract suspend fun stopReceived()
-    protected abstract suspend fun onReceived()
-    protected abstract suspend fun offReceived()
-    protected abstract suspend fun clickReceived(msgContent: Int)
+    protected abstract suspend fun startReceived(msg: ApplMessage)
+    protected abstract suspend fun stopReceived(msg: ApplMessage)
+    protected abstract suspend fun onReceived(msg: ApplMessage)
+    protected abstract suspend fun offReceived(msg: ApplMessage)
+    protected abstract suspend fun clickReceived(msg: ApplMessage)
 
     protected abstract suspend fun applLogic()
 
@@ -30,7 +30,6 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
         count++
         return ApplMessage("msg( off, dispatch, $sender, $receiver, off, $count )")
     }
-
 
     protected fun MsgUtil.startMsg(sender: String, receiver: String): ApplMessage {
         count++

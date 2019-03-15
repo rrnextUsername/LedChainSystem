@@ -14,24 +14,23 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
     override suspend fun actorBody(msg: ApplMessage) {
         when (msg.msgId()) {
-            "start" -> startReceived()
-            "stop" -> stopReceived()
-            "on" -> onReceived()
-            "off" -> offReceived()
-            "click" -> clickReceived(msg.msgContent().toInt())
+            "start" -> startReceived(msg)
+            "stop" -> stopReceived(msg)
+            "on" -> onReceived(msg)
+            "off" -> offReceived(msg)
+            "click" -> clickReceived(msg)
         }
     }
 
-    override suspend fun clickReceived(msgContent: Int) {
-        println(msgContent)
-        if (msgContent % 2 == 0) {
-            stopReceived()
+    override suspend fun clickReceived(msg: ApplMessage) {
+        if (msg.msgId().toInt() % 2 == 0) {
+            stopReceived(msg)
         } else {
-            startReceived()
+            startReceived(msg)
         }
     }
 
-    override suspend fun startReceived() {
+    override suspend fun startReceived(msg: ApplMessage) {
         if (doBlink) {
             return
         }
@@ -49,7 +48,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
     }
 
-    override suspend fun stopReceived() {
+    override suspend fun stopReceived(msg: ApplMessage) {
         if (!doBlink) {
             return
         }
@@ -63,7 +62,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
         ledModel!!.turnOn()
     }
 
-    override suspend fun onReceived() {
+    override suspend fun onReceived(msg: ApplMessage) {
         if (doBlink) {
             return
         }
@@ -71,7 +70,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
         doBlink = true
     }
 
-    override suspend fun offReceived() {
+    override suspend fun offReceived(msg: ApplMessage) {
         applLogic()
     }
 
