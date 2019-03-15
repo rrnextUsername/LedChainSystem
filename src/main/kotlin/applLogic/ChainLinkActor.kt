@@ -29,8 +29,11 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     private suspend fun suspendReceived(msg: ApplMessage) {
-        if (suspendedBlink != null)
+        if (suspendedBlink != null) {
+            println("$name: suspendedBlink is set, exiting")
             return
+        }
+        println("$name: suspendedBlink is not set, spreading")
 
         suspendedBlink = doBlink
         doBlink = false

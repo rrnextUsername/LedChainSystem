@@ -74,6 +74,7 @@ public class SegChainFramework implements ISegChainFramework {
             }else {
                 MsgUtil.INSTANCE.forward(new ApplMessage("suspend", "dispatch", "main", "first", "suspend", "0"), chain.get(0).getChannel());
                 addLink(link);
+                Utils.delay(250);
                 MsgUtil.INSTANCE.forward(new ApplMessage("resume", "dispatch", "main", "first", "resume", "0"), chain.get(0).getChannel());
 
             }
