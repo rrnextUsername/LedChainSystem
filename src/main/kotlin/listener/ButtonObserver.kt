@@ -1,10 +1,13 @@
+package listener
+
+import it.unibo.bls.interfaces.IObserver
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.channels.SendChannel
 import java.util.*
 
 
-class ButtonObserver : Observer {
+class ButtonObserver : IObserver {
     private var controller: SendChannel<ApplMessage>? = null
 
     private var clickCount = 0

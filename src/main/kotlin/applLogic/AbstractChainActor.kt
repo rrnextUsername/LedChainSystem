@@ -1,11 +1,19 @@
+package applLogic
+
+import interfaces.IChainActor
 import it.unibo.blsFramework.interfaces.ILedModel
 import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
+import kotlinx.coroutines.channels.SendChannel
 
-abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
+abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName), IChainActor {
 
-    protected var ledModel: ILedModel? = null
+    override var ledModel: ILedModel? = null
+    override var next: SendChannel<ApplMessage>? = null
+    override var prev: SendChannel<ApplMessage>? = null
+    override var head: Boolean = false
+    override var clickCount: Int = 0
 
     protected abstract suspend fun startReceived(msg: ApplMessage)
     protected abstract suspend fun stopReceived(msg: ApplMessage)
@@ -15,30 +23,24 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
 
     protected abstract suspend fun applLogic()
 
-
-    protected fun MsgUtil.customMsg(id: String, sender: String, receiver: String, msg: String): ApplMessage {
-        count++
-        return ApplMessage("msg( $id, dispatch, $sender, $receiver, $msg, $count )")
-    }
-
     protected fun MsgUtil.onMsg(sender: String, receiver: String): ApplMessage {
         count++
-        return ApplMessage("msg( on, dispatch, $sender, $receiver, on, $count )")
+        return ApplMessage("on", "dispatch", sender, receiver, "on", count.toString())
     }
 
     protected fun MsgUtil.offMsg(sender: String, receiver: String): ApplMessage {
         count++
-        return ApplMessage("msg( off, dispatch, $sender, $receiver, off, $count )")
+        return ApplMessage("off", "dispatch", sender, receiver, "off", count.toString())
     }
 
     protected fun MsgUtil.startMsg(sender: String, receiver: String): ApplMessage {
         count++
-        return ApplMessage("msg( start, dispatch, $sender, $receiver, start, $count )")
+        return ApplMessage("start", "dispatch", sender, receiver, "start", count.toString())
     }
 
     protected fun MsgUtil.stopMsg(sender: String, receiver: String): ApplMessage {
         count++
-        return ApplMessage("msg( stop, dispatch, $sender, $receiver, stop, $count )")
+        return ApplMessage("stop", "dispatch", sender, receiver, "stop", count.toString())
     }
 
 }
