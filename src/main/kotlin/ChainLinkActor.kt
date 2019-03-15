@@ -1,6 +1,6 @@
 import it.unibo.bls.utils.Utils
-import it.unibo.chain.messages.ApplMessage
-import it.unibo.chain.messages.MsgUtil
+import it.unibo.kactor.ApplMessage
+import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
@@ -11,6 +11,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     var prev: SendChannel<ApplMessage>? = null
 
     var doBlink = false
+    var doSendOff = false
 
     override suspend fun actorBody(msg: ApplMessage) {
         when (msg.msgId()) {
@@ -23,7 +24,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     override suspend fun clickReceived(msg: ApplMessage) {
-        if (msg.msgId().toInt() % 2 == 0) {
+        if (msg.msgContent().toInt() % 2 == 0) {
             stopReceived(msg)
         } else {
             startReceived(msg)
@@ -54,6 +55,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
         }
 
         doBlink = false
+        doSendOff = false
         next!!.send(MsgUtil.stopMsg(name, "next"))
         if (prev != null) {
             prev!!.send(MsgUtil.stopMsg(name, "prev"))
@@ -79,9 +81,10 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
         next!!.send(MsgUtil.onMsg(name, "next"))
 
         GlobalScope.launch {
+            doSendOff = true
             Utils.delay(delay)
 
-            if (doBlink) {
+            if (doSendOff) {
                 ledModel?.turnOn()
                 println("::::::::::$name::coroutine::    led ${ledModel?.state}, blink $doBlink, notifying forward    ::")
                 next!!.send(MsgUtil.offMsg(name, "next"))

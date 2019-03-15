@@ -1,7 +1,7 @@
 import it.unibo.blsFramework.interfaces.ILedModel
-import it.unibo.chain.appl.ActorBasic
-import it.unibo.chain.messages.ApplMessage
-import it.unibo.chain.messages.MsgUtil
+import it.unibo.kactor.ActorBasic
+import it.unibo.kactor.ApplMessage
+import it.unibo.kactor.MsgUtil
 
 abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
 

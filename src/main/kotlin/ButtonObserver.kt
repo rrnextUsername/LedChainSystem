@@ -1,5 +1,5 @@
-import it.unibo.chain.messages.ApplMessage
-import it.unibo.chain.messages.MsgUtil
+import it.unibo.kactor.ApplMessage
+import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.channels.SendChannel
 import java.util.*
 
