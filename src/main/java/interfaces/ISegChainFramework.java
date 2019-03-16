@@ -8,13 +8,17 @@ import java.util.List;
 
 public interface ISegChainFramework {
     void addConcreteButton(IObservable button);
+    void addConcreteLed(IChainActor link, ILed led);
 
-    void addChainLink(IChainActor link, ILed concreteLed);
+    void addChainLink(IChainActor link);
     void setButtonControl(IChainActor buttonControl);
 
     IObservable getConcreteButton();
 
     IButtonModel getButtonModel();
 
-    List<IChainActor> getChain();
+    IChainActor getLinkAt(int position);
+    IChainActor getFirstlink();
+    IChainActor getLastLink();
+
 }

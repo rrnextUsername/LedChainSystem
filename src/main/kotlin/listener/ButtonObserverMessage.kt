@@ -7,7 +7,7 @@ import kotlinx.coroutines.channels.SendChannel
 import java.util.*
 
 
-class ButtonObserver : IObserver {
+class ButtonObserverMessage : IObserver {
     private var controller: SendChannel<ApplMessage>? = null
 
     private var clickCount = 0

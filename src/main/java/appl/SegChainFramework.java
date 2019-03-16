@@ -1,6 +1,5 @@
 package appl;
 
-import applLogic.AbstractChainActor;
 import interfaces.IChainActor;
 import interfaces.ISegChainFramework;
 import it.unibo.bls.interfaces.ILed;
@@ -13,7 +12,8 @@ import it.unibo.blsFramework.models.ButtonModel;
 import it.unibo.blsFramework.models.LedModel;
 import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
-import listener.ButtonObserver;
+import listener.ButtonObserverMessage;
+import model.LedActorModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class SegChainFramework implements ISegChainFramework {
 
     private final String cmdName;
     private List<IChainActor> chain;
-    private ButtonObserver buttonObserver;
+    private ButtonObserverMessage buttonObserverMessage;
     private ButtonModel buttonModel;
     private IObservable concreteButton;
     private IChainActor buttonControl;
@@ -41,14 +41,14 @@ public class SegChainFramework implements ISegChainFramework {
 
     protected void createLogicalComponents() {
         buttonModel = ButtonModel.createButton(cmdName);
-        buttonObserver = new ButtonObserver();
+        buttonObserverMessage = new ButtonObserverMessage();
 
         chain = new ArrayList<>();
     }
 
 
     protected void configureSystemArchitecture() {
-        buttonModel.addObserver(buttonObserver);
+        buttonModel.addObserver(buttonObserverMessage);
     }
 
     @Override
@@ -58,19 +58,37 @@ public class SegChainFramework implements ISegChainFramework {
     }
 
     @Override
-    public void addChainLink(IChainActor link, ILed concreteLed) {
-        ILedObserver ledObs = LedObserver.create();
-        ledObs.setLed(concreteLed);
+    public void addConcreteLed(IChainActor link, ILed led) {
+        if(link.getLedModel()==null)
+            link.setLedModel(LedActorModel.Companion.createLed(link.getName()));
 
-        link.setLedModel(LedModel.createLed(ledObs));
+        if(!chain.contains(link)){
+            chain.add(link);
+        }
 
+        if (buttonControl.getClickCount() %2 == 0) {//the chain hasn't started or is stopped, i don't need to start/stop the system
+            ILedObserver ledObs = LedObserver.create();
+            ledObs.setLed(led);
+            link.getLedModel().addObserver(ledObs);
+
+        } else {
+            //sendClick();
+            ILedObserver ledObs = LedObserver.create();
+            ledObs.setLed(led);
+            link.getLedModel().addObserver(ledObs);
+            //sendClick();
+        }
+    }
+
+    @Override
+    public void addChainLink(IChainActor link) {
         if (chain.isEmpty()) {
             //if the link is the first one to be added, add it to the list and connect it to the observer
             chain.add(link);
             link.setHead(true);
 
             buttonControl=link;
-            buttonObserver.setControl(buttonControl.getChannel());
+            buttonObserverMessage.setControl(buttonControl.getChannel());
 
         } else {
             if (buttonControl.getClickCount() %2 == 0) {//the chain hasn't started or is stopped, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
@@ -103,7 +121,7 @@ public class SegChainFramework implements ISegChainFramework {
 
     private void setControlLink(IChainActor link){
         buttonControl=link;
-        buttonObserver.setControl(buttonControl.getChannel());
+        buttonObserverMessage.setControl(buttonControl.getChannel());
     }
 
     private void addLink(IChainActor link) {
@@ -131,8 +149,18 @@ public class SegChainFramework implements ISegChainFramework {
     }
 
     @Override
-    public List<IChainActor> getChain() {
-        return chain;
+    public IChainActor getLinkAt(int position) {
+        return chain.get(position);
+    }
+
+    @Override
+    public IChainActor getFirstlink() {
+        return getLinkAt(0);
+    }
+
+    @Override
+    public IChainActor getLastLink() {
+        return getLinkAt(chain.size()-1);
     }
 
     private void sendClick(){
