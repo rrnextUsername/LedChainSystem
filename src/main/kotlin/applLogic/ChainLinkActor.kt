@@ -1,67 +1,30 @@
 package applLogic
 
+import interfaces.ILedActorModel
 import it.unibo.bls.utils.Utils
+import it.unibo.blsFramework.interfaces.ILedModel
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import model.LedActorModel
 
 class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainActor(linkName) {
 
     var doBlink = false
     var doSendOff = false
-
-    var suspendedBlink: Boolean = doBlink
-    var suspendedSendOff: Boolean = doSendOff
-    var isSuspended: Boolean = false
+    override var ledModel: ILedModel? = null
 
     override suspend fun actorBody(msg: ApplMessage) {
         when (msg.msgId()) {
             "start" -> startReceived(msg)
             "stop" -> stopReceived(msg)
 
-            "suspend" -> suspendReceived(msg)
-            "resume" -> resumeReceived(msg)
-
             "on" -> onReceived(msg)
             "off" -> offReceived(msg)
 
             "click" -> clickReceived(msg)
         }
-    }
-
-    private suspend fun suspendReceived(msg: ApplMessage) {
-        if (isSuspended) {
-            println("$name: already suspended, exiting")
-            return
-        }
-        println("$name: suspending")
-
-        suspendedBlink = doBlink
-        doBlink = false
-
-        suspendedSendOff = doSendOff
-        doSendOff = false
-
-        isSuspended = true
-
-        prev!!.send(MsgUtil.suspendMsg(name, "prev"))
-    }
-
-    private suspend fun resumeReceived(msg: ApplMessage) {
-        if (!isSuspended) {
-            println("$name: already resumed, exiting")
-            return
-        }
-        println("$name: resuming")
-
-        doBlink = suspendedBlink
-
-        doSendOff = suspendedSendOff
-
-        isSuspended = false
-
-        prev!!.send(MsgUtil.resumeMsg(name, "prev"))
     }
 
     override suspend fun clickReceived(msg: ApplMessage) {
@@ -141,13 +104,25 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
         }
     }
 
-    //error in the underlying logic
-    private fun turnOnLed() {
-        ledModel?.turnOff()
+    //error in the underlying logic, turnOn->off and turnOff->on :P
+    private suspend fun turnOnLed() {
+        if(ledModel==null)
+            return
+
+        when(ledModel){
+            is ILedActorModel -> (ledModel as ILedActorModel)!!.getChannel().send(MsgUtil.offMsg(name,"led"))
+            else -> ledModel!!.turnOff()
+        }
     }
 
-    private fun turnOffLed() {
-        ledModel?.turnOn()
+    private suspend fun turnOffLed() {
+        if(ledModel==null)
+            return
+
+        when(ledModel){
+            is ILedActorModel -> (ledModel as ILedActorModel)!!.getChannel().send(MsgUtil.onMsg(name,"led"))
+            else -> ledModel!!.turnOn()
+        }
     }
 
 }

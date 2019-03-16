@@ -4,7 +4,7 @@ import it.unibo.blsFramework.interfaces.ILedModel
 import it.unibo.kactor.ApplMessage
 import kotlinx.coroutines.channels.SendChannel
 
-interface IChainActor {
+interface IChainActor : IActorBasic {
 
     var next: SendChannel<ApplMessage>?
     var prev: SendChannel<ApplMessage>?
@@ -13,7 +13,5 @@ interface IChainActor {
     var head: Boolean
 
     var ledModel: ILedModel?
-
-    fun getChannel(): SendChannel<ApplMessage>
 
 }
