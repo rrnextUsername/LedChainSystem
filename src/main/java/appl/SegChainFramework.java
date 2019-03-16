@@ -65,19 +65,9 @@ public class SegChainFramework implements ISegChainFramework {
         if(link.getLedModel()==null)
             link.setLedModel(LedActorModel.Companion.createLed(link.getName()));
 
-
-        if (buttonControl.getClickCount() %2 == 0) {//the chain hasn't started or is stopped, i don't need to start/stop the system
             ILedObserver ledObs = LedObserver.create();
             ledObs.setLed(led);
             link.getLedModel().addObserver(ledObs);
-
-        } else {
-            //sendClick();
-            ILedObserver ledObs = LedObserver.create();
-            ledObs.setLed(led);
-            link.getLedModel().addObserver(ledObs);
-            //sendClick();
-        }
     }
 
     @Override
