@@ -12,6 +12,6 @@ interface IChainActor : IActorBasic {
 
     var head: Boolean
 
-    var ledModel: ILedModel?
+    var ledModel: ILedActorModel?
 
 }

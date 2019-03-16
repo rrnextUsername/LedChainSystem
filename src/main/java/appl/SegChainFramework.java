@@ -62,7 +62,6 @@ public class SegChainFramework implements ISegChainFramework {
             return;
         }
 
-
         if(link.getLedModel()==null)
             link.setLedModel(LedActorModel.Companion.createLed(link.getName()));
 
@@ -88,9 +87,7 @@ public class SegChainFramework implements ISegChainFramework {
             chain.add(link);
             link.setHead(true);
 
-            buttonControl=link;
-            buttonObserverMessage.setControl(buttonControl.getChannel());
-
+            setControlLink(link);
         } else {
             if (buttonControl.getClickCount() %2 == 0) {//the chain hasn't started or is stopped, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
                  addLink(link);

@@ -13,7 +13,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
     var doBlink = false
     var doSendOff = false
-    override var ledModel: ILedModel? = null
+    override var ledModel: ILedActorModel? = null
 
     override suspend fun actorBody(msg: ApplMessage) {
         when (msg.msgId()) {
@@ -106,23 +106,11 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
     //error in the underlying logic, turnOn->off and turnOff->on :P
     private suspend fun turnOnLed() {
-        if(ledModel==null)
-            return
-
-        when(ledModel){
-            is ILedActorModel -> (ledModel as ILedActorModel)!!.getChannel().send(MsgUtil.offMsg(name,"led"))
-            else -> ledModel!!.turnOff()
-        }
+        ledModel?.getChannel()?.send(MsgUtil.offMsg(name,"led"))
     }
 
     private suspend fun turnOffLed() {
-        if(ledModel==null)
-            return
-
-        when(ledModel){
-            is ILedActorModel -> (ledModel as ILedActorModel)!!.getChannel().send(MsgUtil.onMsg(name,"led"))
-            else -> ledModel!!.turnOn()
-        }
+        ledModel?.getChannel()?.send(MsgUtil.onMsg(name,"led"))
     }
 
 }
