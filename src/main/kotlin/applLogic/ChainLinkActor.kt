@@ -2,12 +2,10 @@ package applLogic
 
 import interfaces.ILedActorModel
 import it.unibo.bls.utils.Utils
-import it.unibo.blsFramework.interfaces.ILedModel
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import model.LedActorModel
 
 class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainActor(linkName) {
 
@@ -45,7 +43,6 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
         }
 
         doBlink = true
-        //next!!.send(MsgUtil.startMsg(name, "next"))
         prev!!.send(MsgUtil.startMsg(name, "prev"))
 
         if (head) {
@@ -61,7 +58,6 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
         doBlink = false
         doSendOff = false
-        //next!!.send(MsgUtil.stopMsg(name, "next"))
         prev!!.send(MsgUtil.stopMsg(name, "prev"))
     }
 
