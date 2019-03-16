@@ -69,13 +69,12 @@ public class SegChainFramework implements ISegChainFramework {
             buttonObserver.setControl(link.getChannel());
 
         } else {
-            if (chain.get(0).getClickCount() == 0) {//the chain hasn't started, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
+            if (chain.get(0).getClickCount()%2 == 0) {//the chain hasn't started, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
                  addLink(link);
             }else {
-                MsgUtil.INSTANCE.forward(new ApplMessage("suspend", "dispatch", "main", "first", "suspend", "0"), chain.get(0).getChannel());
+                MsgUtil.INSTANCE.forward(new ApplMessage("click", "dispatch", "main", "first", "suspend", "0"), chain.get(0).getChannel());
                 addLink(link);
-                Utils.delay(250);
-                MsgUtil.INSTANCE.forward(new ApplMessage("resume", "dispatch", "main", "first", "resume", "0"), chain.get(0).getChannel());
+                MsgUtil.INSTANCE.forward(new ApplMessage("click", "dispatch", "main", "first", "resume", "0"), chain.get(0).getChannel());
 
             }
 

@@ -27,10 +27,10 @@ public class JavaMain extends SegChainFramework {
 
         Utils.delay(5000);
 
-        for (int k = 1; k < 2; k++) {
+        for (int k = 1; k < 6; k++) {
             for (int i = 0; i < 5; i++) {
                 chainSystem.addChainLink(new ChainLinkActor("seg" + i + "" + k, 500), new LedSegmentAdapter("seg2", 20, 10, i * 120, k * 100));
-                Utils.delay(10000);
+                Utils.delay(2000);
             }
         }
     }
