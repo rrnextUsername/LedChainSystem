@@ -9,8 +9,6 @@ import it.unibo.bls.utils.Utils;
 import model.LedActorModel;
 import segments.LedSegmentAdapter;
 
-import java.util.Random;
-
 public class JavaMain extends SegChainFramework {
 
     public JavaMain(String cmdName) {
@@ -33,16 +31,16 @@ public class JavaMain extends SegChainFramework {
 
         //the creation of the LedModels can be left to the framework
         chainSystem.addChainLink(new ChainLinkActor("seg2", 500));
-        chainSystem.addConcreteLed(chainSystem.getLinkAt(1), new LedSegmentAdapter("seg2", 20, 10,1120,0));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg2", 20, 10, 1120, 0));
 
         chainSystem.addChainLink(new ChainLinkActor("seg3", 500));
-        chainSystem.addConcreteLed(chainSystem.getLinkAt(2), new LedSegmentAdapter("seg3", 20, 10,1240,0));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg3", 20, 10, 1240, 0));
 
         chainSystem.addChainLink(new ChainLinkActor("seg4", 500));
-        chainSystem.addConcreteLed(chainSystem.getLinkAt(3), new LedSegmentAdapter("seg4", 20, 10,1360,0));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg4", 20, 10, 1360, 0));
 
         chainSystem.addChainLink(new ChainLinkActor("seg5", 500));
-        chainSystem.addConcreteLed(chainSystem.getLinkAt(4), new LedSegmentAdapter("seg5", 20, 10,1480,0));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg5", 20, 10, 1480, 0));
 
 
 
@@ -70,5 +68,8 @@ public class JavaMain extends SegChainFramework {
 
         System.out.println("-----------------------ADDING MORE CONCRETE LEDS----------------------------");
         chainSystem.addConcreteLed(chainSystem.getFirstlink(), LedAsGui.createLed());
+
+        chainSystem.addChainLink(new ChainLinkActor("seg5", 500));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), LedAsGui.createLed());
     }
 }

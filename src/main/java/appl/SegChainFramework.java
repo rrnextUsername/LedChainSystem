@@ -9,7 +9,6 @@ import it.unibo.blsFramework.concreteDevices.LedObserver;
 import it.unibo.blsFramework.interfaces.IButtonModel;
 import it.unibo.blsFramework.interfaces.ILedObserver;
 import it.unibo.blsFramework.models.ButtonModel;
-import it.unibo.blsFramework.models.LedModel;
 import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
 import listener.ButtonObserverMessage;
@@ -59,12 +58,14 @@ public class SegChainFramework implements ISegChainFramework {
 
     @Override
     public void addConcreteLed(IChainActor link, ILed led) {
+        if (!chain.contains(link)) {
+            return;
+        }
+
+
         if(link.getLedModel()==null)
             link.setLedModel(LedActorModel.Companion.createLed(link.getName()));
 
-        if(!chain.contains(link)){
-            chain.add(link);
-        }
 
         if (buttonControl.getClickCount() %2 == 0) {//the chain hasn't started or is stopped, i don't need to start/stop the system
             ILedObserver ledObs = LedObserver.create();
