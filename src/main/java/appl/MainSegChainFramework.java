@@ -9,9 +9,9 @@ import it.unibo.bls.utils.Utils;
 import model.LedActorModel;
 import segments.LedSegmentAdapter;
 
-public class JavaMain extends SegChainFramework {
+public class MainSegChainFramework extends SegChainFramework {
 
-    public JavaMain(String cmdName) {
+    public MainSegChainFramework(String cmdName) {
         super(cmdName);
     }
 
@@ -55,8 +55,8 @@ public class JavaMain extends SegChainFramework {
             }
         }
 
-        chainSystem.setButtonControl(chainSystem.getLinkAt(3));
         System.out.println("-----------------------CONTROL LINK CHANGED----------------------------");
+        chainSystem.setButtonControl(chainSystem.getLinkAt(3));
 
         for (int k = 1; k < 2; k++) {
             for (int i = 0; i < 5; i++) {
