@@ -101,6 +101,7 @@ public class SegChainFramework implements ISegChainFramework {
                 setControlLink(link);
             } else {
                 sendClick();
+                Utils.delay(50);
                 setControlLink(link);
                 sendClick();
             }
@@ -152,6 +153,6 @@ public class SegChainFramework implements ISegChainFramework {
     }
 
     private void sendClick(){
-        MsgUtil.INSTANCE.forward(new ApplMessage("click", "dispatch", "main", "first", "click", "0"), buttonControl.getChannel());
+        MsgUtil.INSTANCE.forward(new ApplMessage("click", "dispatch", "main", "buttonControl", "click", "0"), buttonControl.getChannel());
     }
 }
