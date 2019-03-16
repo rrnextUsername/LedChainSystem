@@ -9,7 +9,6 @@ import kotlinx.coroutines.channels.SendChannel
 
 abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName), IChainActor {
 
-    override var ledModel: ILedModel? = null
     override var next: SendChannel<ApplMessage>? = null
     override var prev: SendChannel<ApplMessage>? = null
     override var head: Boolean = false
