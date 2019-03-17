@@ -2,6 +2,7 @@ package appl;
 
 import applLogic.ChainLinkActor;
 import interfaces.IChainActor;
+import interfaces.ILedActorModel;
 import interfaces.ISegChainFramework;
 import it.unibo.bls.utils.Utils;
 import it.unibo.kactor.MsgUtil;
@@ -19,8 +20,10 @@ public class MainSegChainFramework extends SegChainFramework {
 
         //the first one is automatically set up for receiving button clicked messages
         IChainActor actor1 = new ChainLinkActor("seg1", 500);
-        actor1.setLedModel(LedActorModel.Companion.createLed(actor1.getName()));
+        ILedActorModel ledModel = LedActorModel.Companion.createLed(actor1.getName());
+        actor1.setLedModel(ledModel.getChannel());
         chainSystem.addChainLink(actor1);
+        chainSystem.addLedModel(ledModel);
         chainSystem.addConcreteLed(chainSystem.getLinkAt(0), new LedSegmentAdapter("seg1", 20, 10, 1000, 0));
 
 
@@ -45,9 +48,9 @@ public class MainSegChainFramework extends SegChainFramework {
         MainSegChainFramework.systemSetup(chainSystem);
 
         System.out.println("-----------------------TESTING START/STOP----------------------------");
-        MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.startMsg(), chainSystem.getFirstlink().getChannel());
+        MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.startMsg(), chainSystem.getFirstLink().getChannel());
         Utils.delay(6000);
-        MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.stoptMsg(), chainSystem.getFirstlink().getChannel());
+        MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.stoptMsg(), chainSystem.getFirstLink().getChannel());
     }
 
 

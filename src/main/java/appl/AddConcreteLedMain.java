@@ -21,7 +21,7 @@ public class AddConcreteLedMain extends MainSegChainFramework {
 
         Utils.delay(10000);
         System.out.println("-----------------------ADDING MORE CONCRETE LEDS----------------------------");
-        chainSystem.addConcreteLed(chainSystem.getFirstlink(), LedAsGui.createLed());
+        chainSystem.addConcreteLed(chainSystem.getLinkAt(3), LedAsGui.createLed());
 
         Utils.delay(2000);
         chainSystem.addChainLink(new ChainLinkActor("seg5", 500));

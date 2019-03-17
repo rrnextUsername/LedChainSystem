@@ -18,7 +18,7 @@ public class ChangeControlMain extends MainSegChainFramework {
 
         Utils.delay(5000);
         System.out.println("-----------------------CONTROL LINK CHANGED----------------------------");
-        chainSystem.setButtonControl(chainSystem.getLinkAt(3));
+        chainSystem.addButtonObserver(chainSystem.getLinkAt(3));
 
     }
 }

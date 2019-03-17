@@ -1,6 +1,6 @@
 package interfaces
 
-import it.unibo.blsFramework.interfaces.ILedModel
+import applLogic.LinkState
 import it.unibo.kactor.ApplMessage
 import kotlinx.coroutines.channels.SendChannel
 
@@ -8,10 +8,10 @@ interface IChainActor : IActorBasic {
 
     var next: SendChannel<ApplMessage>?
     var prev: SendChannel<ApplMessage>?
-    var clickCount: Int
 
     var head: Boolean
+    var state: LinkState
 
-    var ledModel: ILedActorModel?
+    var ledModel: SendChannel<ApplMessage>?
 
 }
