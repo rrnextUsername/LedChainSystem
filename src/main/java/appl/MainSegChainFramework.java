@@ -47,6 +47,14 @@ public class MainSegChainFramework extends SegChainFramework {
 
         MainSegChainFramework.systemSetup(chainSystem);
 
+
+        for (int k = 1; k < 2; k++) {
+            for (int i = 0; i < 5; i++) {
+                chainSystem.addChainLink(new ChainLinkActor("seg"+i+""+k, 500));
+                chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg"+i+""+k, 20, 10,1000+120*i,300*k));
+                Utils.delay(2000);
+            }
+        }
         System.out.println("-----------------------TESTING START/STOP----------------------------");
         MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.startMsg(), chainSystem.getFirstLink().getChannel());
         Utils.delay(6000);
