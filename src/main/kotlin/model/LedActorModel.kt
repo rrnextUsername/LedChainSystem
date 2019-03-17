@@ -16,7 +16,7 @@ class LedActorModel(actorName: String) : ActorBasic(actorName), ILedActorModel {
     }
 
     override fun turnOff() {
-        println("off received")
+        println("$name::off received")
         ledModel.turnOff()
     }
 
@@ -25,7 +25,7 @@ class LedActorModel(actorName: String) : ActorBasic(actorName), ILedActorModel {
     }
 
     override fun turnOn() {
-        println("on received")
+        println("$name::on received")
         ledModel.turnOn()
     }
 

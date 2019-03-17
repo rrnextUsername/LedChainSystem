@@ -2,10 +2,10 @@ package appl;
 
 import applLogic.ChainLinkActor;
 import interfaces.IChainActor;
+import interfaces.ILedActorModel;
 import interfaces.ISegChainFramework;
-import it.unibo.bls.devices.gui.ButtonAsGui;
-import it.unibo.bls.devices.gui.LedAsGui;
 import it.unibo.bls.utils.Utils;
+import it.unibo.kactor.MsgUtil;
 import model.LedActorModel;
 import segments.LedSegmentAdapter;
 
@@ -15,18 +15,16 @@ public class MainSegChainFramework extends SegChainFramework {
         super(cmdName);
     }
 
-    public static void main(String[] args) {
+    public static void systemSetup(ISegChainFramework chainSystem) {
 
-        ISegChainFramework chainSystem = SegChainFramework.createTheSystem("CHAIN_SYSTEM");
-
-        chainSystem.addConcreteButton(ButtonAsGui.createButton("click me"));
 
         //the first one is automatically set up for receiving button clicked messages
-        IChainActor actor1= new ChainLinkActor("seg1", 500);
-        actor1.setLedModel(LedActorModel.Companion.createLed(actor1.getName()));
+        IChainActor actor1 = new ChainLinkActor("seg1", 500);
+        ILedActorModel ledModel = LedActorModel.Companion.createLed(actor1.getName());
+        actor1.setLedModel(ledModel.getChannel());
         chainSystem.addChainLink(actor1);
-        chainSystem.addConcreteLed(chainSystem.getLinkAt(0), new LedSegmentAdapter("seg1", 20, 10,1000,0));
-
+        chainSystem.addLedModel(ledModel);
+        chainSystem.addConcreteLed(chainSystem.getLinkAt(0), new LedSegmentAdapter("seg1", 20, 10, 1000, 0));
 
 
         //the creation of the LedModels can be left to the framework
@@ -41,35 +39,19 @@ public class MainSegChainFramework extends SegChainFramework {
 
         chainSystem.addChainLink(new ChainLinkActor("seg5", 500));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg5", 20, 10, 1480, 0));
-
-
-
-        Utils.delay(5000);
-        System.out.println("-----------------------ADDING MORE LINKS----------------------------");
-
-        for (int k = 1; k < 2; k++) {
-            for (int i = 0; i < 5; i++) {
-                chainSystem.addChainLink(new ChainLinkActor("seg"+i+""+k, 500));
-                chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg"+i+""+k, 20, 10,1000+120*i,100*k));
-                Utils.delay(2000);
-            }
-        }
-
-        System.out.println("-----------------------CONTROL LINK CHANGED----------------------------");
-        chainSystem.setButtonControl(chainSystem.getLinkAt(3));
-
-        for (int k = 1; k < 2; k++) {
-            for (int i = 0; i < 5; i++) {
-                chainSystem.addChainLink(new ChainLinkActor("seg"+i+""+k, 500));
-                chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg"+i+""+k, 20, 10,1000+120*i,200*k));
-                Utils.delay(2000);
-            }
-        }
-
-        System.out.println("-----------------------ADDING MORE CONCRETE LEDS----------------------------");
-        chainSystem.addConcreteLed(chainSystem.getFirstlink(), LedAsGui.createLed());
-
-        chainSystem.addChainLink(new ChainLinkActor("seg5", 500));
-        chainSystem.addConcreteLed(chainSystem.getLastLink(), LedAsGui.createLed());
     }
+
+    public static void main(String[] args) {
+
+        ISegChainFramework chainSystem = SegChainFramework.createTheSystem("CHAIN_SYSTEM");
+
+        MainSegChainFramework.systemSetup(chainSystem);
+
+        System.out.println("-----------------------TESTING START/STOP----------------------------");
+        MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.startMsg(), chainSystem.getFirstLink().getChannel());
+        Utils.delay(6000);
+        MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.stoptMsg(), chainSystem.getFirstLink().getChannel());
+    }
+
+
 }

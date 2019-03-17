@@ -4,21 +4,25 @@ import it.unibo.bls.interfaces.ILed;
 import it.unibo.bls.interfaces.IObservable;
 import it.unibo.blsFramework.interfaces.IButtonModel;
 
-import java.util.List;
-
 public interface ISegChainFramework {
     void addConcreteButton(IObservable button);
     void addConcreteLed(IChainActor link, ILed led);
 
     void addChainLink(IChainActor link);
-    void setButtonControl(IChainActor buttonControl);
+
+    void addButtonObserver(IChainActor buttonControl);
+
+    void addLedModel(ILedActorModel model);
+
+    ILedActorModel getLedModelOf(IChainActor link);
 
     IObservable getConcreteButton();
 
     IButtonModel getButtonModel();
 
     IChainActor getLinkAt(int position);
-    IChainActor getFirstlink();
+
+    IChainActor getFirstLink();
     IChainActor getLastLink();
 
 }
