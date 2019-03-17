@@ -1,19 +1,17 @@
 package applLogic
 
-import interfaces.ILedActorModel
 import it.unibo.bls.utils.Utils
-import it.unibo.blsFramework.interfaces.ILedModel
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
-import model.LedActorModel
 
 class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainActor(linkName) {
 
-    var doBlink = false
-    var doSendOff = false
-    override var ledModel: ILedActorModel? = null
+    override var ledModel: SendChannel<ApplMessage>? = null
+    //var doSendOff = false
+
 
     override suspend fun actorBody(msg: ApplMessage) {
         when (msg.msgId()) {
@@ -28,24 +26,26 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     override suspend fun clickReceived(msg: ApplMessage) {
-        clickCount++
 
-        if (clickCount % 2 == 0) {
-            stopReceived(msg)
+        if (state == LinkState.STARTED) {
+            autoMsg(MsgUtil.stoptMsg())
+
+            //stopReceived(msg)
             //ledModel!!.turnOff()
         } else {
-            startReceived(msg)
+            autoMsg(MsgUtil.startMsg())
+
+            //startReceived(msg)
             //ledModel!!.turnOn()
         }
     }
 
     override suspend fun startReceived(msg: ApplMessage) {
-        if (doBlink) {
+        if (state == LinkState.STARTED) {
             return
         }
 
-        doBlink = true
-        //next!!.send(MsgUtil.startMsg(name, "next"))
+        state = LinkState.STARTED
         prev!!.send(MsgUtil.startMsg(name, "prev"))
 
         if (head) {
@@ -55,22 +55,21 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     override suspend fun stopReceived(msg: ApplMessage) {
-        if (!doBlink) {
+        if (state == LinkState.STOPPED) {
             return
         }
 
-        doBlink = false
-        doSendOff = false
-        //next!!.send(MsgUtil.stopMsg(name, "next"))
+        state = LinkState.STOPPED
+        // doSendOff = false
         prev!!.send(MsgUtil.stopMsg(name, "prev"))
     }
 
     override suspend fun onReceived(msg: ApplMessage) {
-        if (doBlink) {
+        if (state == LinkState.STARTED) {
             return
         }
 
-        doBlink = true
+        state = LinkState.STARTED
     }
 
     override suspend fun offReceived(msg: ApplMessage) {
@@ -80,25 +79,22 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     override suspend fun applLogic() {
-        if (!doBlink)
+        if (state == LinkState.STOPPED)
             return
 
         turnOnLed()
         next!!.send(MsgUtil.onMsg(name, "next"))
 
         GlobalScope.launch {
-            doSendOff = true
+            //doSendOff = true
             Utils.delay(delay)
 
-            if (doSendOff) {
+            if (state == LinkState.STARTED) {
                 turnOffLed()
 
-                println("::::::::::$name::coroutine::    led ${ledModel?.state}|blink $doBlink|head $head::  notifying forward    ::")
                 next!!.send(MsgUtil.offMsg(name, "next"))
 
                 head = false
-            } else {
-                println("::::::::::$name::coroutine::    led ${ledModel?.state}|blink $doBlink|head $head::  dropping    ::")
             }
 
         }
@@ -106,11 +102,12 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
     //error in the underlying logic, turnOn->off and turnOff->on :P
     private suspend fun turnOnLed() {
-        ledModel?.getChannel()?.send(MsgUtil.offMsg(name,"led"))
+        ledModel?.send(MsgUtil.offMsg(name, "led"))
     }
 
     private suspend fun turnOffLed() {
-        ledModel?.getChannel()?.send(MsgUtil.onMsg(name,"led"))
+        ledModel?.send(MsgUtil.onMsg(name, "led"))
+
     }
 
 }
