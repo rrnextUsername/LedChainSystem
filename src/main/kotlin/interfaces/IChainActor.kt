@@ -9,7 +9,7 @@ interface IChainActor : IActorBasic {
     var next: SendChannel<ApplMessage>?
     var prev: SendChannel<ApplMessage>?
 
-    var head: Boolean
+    var hasToken: Boolean
     var state: LinkState
 
     var ledModel: SendChannel<ApplMessage>?

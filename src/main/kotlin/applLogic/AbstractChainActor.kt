@@ -10,10 +10,9 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName), IC
 
     override var next: SendChannel<ApplMessage>? = null
     override var prev: SendChannel<ApplMessage>? = null
-    override var head: Boolean = false
+    override var hasToken: Boolean = false
     //override var state: Boolean = false
 
-    // override var stateInt: Int=0 //tate1
     override var state: LinkState = LinkState.STOPPED
 
     protected abstract suspend fun startReceived(msg: ApplMessage)
