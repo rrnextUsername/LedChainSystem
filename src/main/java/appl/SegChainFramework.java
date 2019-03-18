@@ -82,7 +82,7 @@ public class SegChainFramework implements ISegChainFramework {
         if (chain.isEmpty()) {
             //if the link is the first one to be added, add it to the list and connect it to the observer
             chain.add(link);
-            link.setHead(true);
+            link.setHasToken(true);
 
             addObserverLink(link);
         } else {
@@ -135,7 +135,7 @@ public class SegChainFramework implements ISegChainFramework {
         IChainActor first = chain.get(0);
 
         chain.add(link);
-        link.setHead(false); //in case the link wasn't properly set up
+        link.setHasToken(false); //in case the link wasn't properly set up
 
         last.setNext(link.getChannel());
         first.setPrev(link.getChannel());

@@ -48,7 +48,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
         state = LinkState.STARTED
         prev!!.send(MsgUtil.startMsg(name, "prev"))
 
-        if (head) {
+        if (hasToken) {
             println("::::::::::$name::    i'm the first one, starting chain    ::")
             applLogic()
         }
@@ -73,7 +73,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     override suspend fun offReceived(msg: ApplMessage) {
-        head = true
+        hasToken = true
 
         applLogic()
     }
@@ -94,7 +94,9 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
                 next!!.send(MsgUtil.offMsg(name, "next"))
 
-                head = false
+                hasToken = false
+            } else {
+                println("dropping")
             }
 
         }
