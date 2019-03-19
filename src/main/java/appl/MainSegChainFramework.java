@@ -19,7 +19,7 @@ public class MainSegChainFramework extends SegChainFramework {
 
 
         //the first one is automatically set up for receiving button clicked messages
-        IChainActor actor1 = new ChainLinkActor("seg1", 2500);
+        IChainActor actor1 = new ChainLinkActor("seg1", 500);
         ILedActorModel ledModel = LedActorModel.Companion.createLed(actor1.getName());
         actor1.setLedModel(ledModel.getChannel());
         chainSystem.addChainLink(actor1);
@@ -27,16 +27,16 @@ public class MainSegChainFramework extends SegChainFramework {
         chainSystem.addConcreteLed(chainSystem.getLinkAt(0), new LedSegmentAdapter("seg1", 20, 10, 1000, 0));
 
         //the creation of the LedModels can be left to the framework
-        chainSystem.addChainLink(new ChainLinkActor("seg2", 2500));
+        chainSystem.addChainLink(new ChainLinkActor("seg2", 500));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg2", 20, 10, 1120, 0));
 
-        chainSystem.addChainLink(new ChainLinkActor("seg3", 2500));
+        chainSystem.addChainLink(new ChainLinkActor("seg3", 500));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg3", 20, 10, 1240, 0));
 
-        chainSystem.addChainLink(new ChainLinkActor("seg4", 2500));
+        chainSystem.addChainLink(new ChainLinkActor("seg4", 500));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg4", 20, 10, 1360, 0));
 
-        chainSystem.addChainLink(new ChainLinkActor("seg5", 2500));
+        chainSystem.addChainLink(new ChainLinkActor("seg5", 500));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg5", 20, 10, 1480, 0));
     }
 
