@@ -1,6 +1,6 @@
 package appl;
 
-import applLogic.LinkState;
+import enums.LinkState;
 import interfaces.IChainActor;
 import interfaces.ILedActorModel;
 import interfaces.ISegChainFramework;
@@ -68,12 +68,12 @@ public class SegChainFramework implements ISegChainFramework {
 
         if (link.getLedModel() == null) {
             ILedActorModel ledActorModel = LedActorModel.Companion.createLed(link.getName());
-            ledActorModels.add(ledActorModel); //i have to add it to the list, or it stops existing the moment the if ends
+            ledActorModels.add(ledActorModel);
             link.setLedModel(ledActorModel.getChannel());
         }
 
-            ILedObserver ledObs = LedObserver.create();
-            ledObs.setLed(led);
+        ILedObserver ledObs = LedObserver.create();
+        ledObs.setLed(led);
         getLedModelOf(link).addObserver(ledObs);
     }
 
@@ -82,16 +82,15 @@ public class SegChainFramework implements ISegChainFramework {
         if (chain.isEmpty()) {
             //if the link is the first one to be added, add it to the list and connect it to the observer
             chain.add(link);
-            link.setHasToken(true);
 
             addObserverLink(link);
         } else {
-            if (currentButtonObserver.getState() == LinkState.STOPPED) {//the chain hasn't started or is stopped, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
-                 addLink(link);
-            }else {
-                sendClick();
+            if (currentButtonObserver.getState() == LinkState.SLEEP_TOKEN || currentButtonObserver.getState() == LinkState.SLEEP) {//the chain hasn't started or is stopped, i don't need to start/stop the system | i know chain.get(0) exists, or i'd be in the main if branch
                 addLink(link);
-                sendClick();
+            } else {
+                sendStop();
+                addLink(link);
+                sendStart();
             }
         }
     }
@@ -104,13 +103,13 @@ public class SegChainFramework implements ISegChainFramework {
             addObserverLink(link);
         } else {
 
-            if (currentButtonObserver.getState() == LinkState.STOPPED) {//the chain hasn't started or is stopped, i don't need to start/stop the system
+            if (currentButtonObserver.getState() == LinkState.SLEEP_TOKEN || currentButtonObserver.getState() == LinkState.SLEEP) {//the chain hasn't started or is stopped, i don't need to start/stop the system
                 addObserverLink(link);
             } else {
-                sendClick();
+                sendStop();
                 Utils.delay(50);
                 addObserverLink(link);
-                sendClick();
+                sendStart();
             }
         }
     }
@@ -135,7 +134,7 @@ public class SegChainFramework implements ISegChainFramework {
         IChainActor first = chain.get(0);
 
         chain.add(link);
-        link.setHasToken(false); //in case the link wasn't properly set up
+        //link.setHasToken(false); //in case the link wasn't properly set up
 
         last.setNext(link.getChannel());
         first.setPrev(link.getChannel());
@@ -166,10 +165,18 @@ public class SegChainFramework implements ISegChainFramework {
 
     @Override
     public IChainActor getLastLink() {
-        return getLinkAt(chain.size()-1);
+        return getLinkAt(chain.size() - 1);
     }
 
-    private void sendClick(){
-        MsgUtil.INSTANCE.forward(new ApplMessage("click", "dispatch", "main", "buttonControl", "click", "0"), currentButtonObserver.getChannel());
+    private void sendClick() {
+        MsgUtil.INSTANCE.forward(new ApplMessage("CLICK", "dispatch", "main", "buttonControl", "CLICK", "0"), currentButtonObserver.getChannel());
+    }
+
+    private void sendStart() {
+        MsgUtil.INSTANCE.forward(new ApplMessage("ACTIVATE", "dispatch", "main", "buttonControl", "ACTIVATE", "0"), currentButtonObserver.getChannel());
+    }
+
+    private void sendStop() {
+        MsgUtil.INSTANCE.forward(new ApplMessage("DEACTIVATE", "dispatch", "main", "buttonControl", "DEACTIVATE", "0"), currentButtonObserver.getChannel());
     }
 }
