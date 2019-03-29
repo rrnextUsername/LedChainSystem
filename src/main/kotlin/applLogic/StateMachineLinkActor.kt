@@ -6,13 +6,9 @@ import it.unibo.bls.utils.Utils
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 
 class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = false) : AbstractChainActor(name) {
-
-    override var ledModel: SendChannel<ApplMessage>? = null
-    override var state: LinkState = LinkState.SLEEP
 
     private val transitionTable = TransitionTable()
 
@@ -34,6 +30,7 @@ class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = fals
         transitionTable.putAction(LinkState.SLEEP, MsgId.ACTIVATE) { doLive() }
 
 
+        //click handling
         transitionTable.putAction(LinkState.LIVE_TOKEN, MsgId.CLICK) { autoMsg(MsgUtil.deactivateMsg(name, name)) }
         transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.CLICK) { autoMsg(MsgUtil.deactivateMsg(name, name)) }
         transitionTable.putAction(LinkState.LIVE, MsgId.CLICK) { autoMsg(MsgUtil.deactivateMsg(name, name)) }
@@ -42,6 +39,7 @@ class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = fals
         transitionTable.putAction(LinkState.SLEEP, MsgId.CLICK) { autoMsg(MsgUtil.activateMsg(name, name)) }
 
 
+        //error packet handling
         transitionTable.putAction(
             LinkState.LIVE_TOKEN,
             MsgId.DO_ON
@@ -85,7 +83,7 @@ class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = fals
         turnOnLed()
 
         //step 2
-        next!!.send(MsgUtil.activateMsg(name, next.toString()))
+        forward("${MsgId.ACTIVATE}", "activate", next)
 
         //step 3
         GlobalScope.launch {
@@ -102,7 +100,7 @@ class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = fals
         println("Actor: $name :::: started doSleepToken :: state=$state")
 
         //step 1
-        next!!.send(MsgUtil.deactivateMsg(name, next.toString()))
+        forward("${MsgId.DEACTIVATE}", "deactivate", next)
     }
 
     private suspend fun doPassingToken() {
@@ -114,7 +112,7 @@ class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = fals
         turnOffLed()
 
         //step 2
-        next!!.send(MsgUtil.doOnMsg(name, next.toString()))
+        forward("${MsgId.DO_ON}", "deactivate", next)
 
         //step 3
         autoMsg(MsgUtil.doneMsg(name, name))
@@ -126,7 +124,7 @@ class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = fals
         println("Actor: $name :::: started doLive :: state=$state")
 
         //step 1
-        next!!.send(MsgUtil.activateMsg(name, next.toString()))
+        forward("${MsgId.ACTIVATE}", "deactivate", next)
     }
 
     private suspend fun doSleep() {
@@ -135,23 +133,9 @@ class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = fals
         println("Actor: $name :::: started doSleep :: state=$state")
 
         //step 1
-        next!!.send(MsgUtil.deactivateMsg(name, next.toString()))
+        forward("${MsgId.DEACTIVATE}", "deactivate", next)
     }
 
-
-    //error in the underlying logic, turnOn->off and turnOff->on :P
-    private suspend fun turnOnLed() {
-        ledModel!!.send(MsgUtil.offMsg(name, "led"))
-    }
-
-    private suspend fun turnOffLed() {
-        ledModel!!.send(MsgUtil.onMsg(name, "led"))
-
-    }
-
-    override fun toString(): String {
-        return name
-    }
 
 
 }

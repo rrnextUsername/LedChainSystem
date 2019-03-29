@@ -10,6 +10,10 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
@@ -23,7 +27,12 @@ dependencies {
     // https://mvnrepository.com/artifact/org.scream3r/jssc
     compile group: 'org.scream3r', name: 'jssc', version: '2.8.0'
 //CUSTOM
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: '2p301.jar')
+    compile fileTree(dir: 'libs', include: 'it.unibo.bls19Local-1.0.jar')
+    compile fileTree(dir: 'libs', include: 'kotlinx-html-js-0.6.3.jar')
+    compile fileTree(dir: 'libs', include: 'unibonoawtsupports.jar')
+    compile fileTree(dir: 'libs', include: 'uniboInterfaces.jar')
+    compile fileTree(dir: 'libs', include: 'it.unibo.bls19d.jar')
 }
 
 compileKotlin {
