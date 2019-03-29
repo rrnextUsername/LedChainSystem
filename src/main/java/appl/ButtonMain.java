@@ -12,7 +12,8 @@ public class ButtonMain extends MainSegChainFramework {
 
         ISegChainFramework chainSystem = SegChainFramework.createTheSystem("CHAIN_SYSTEM");
 
-        systemSetup(chainSystem);
+        //systemSetup(chainSystem);
+        stateMachineSystemSetup(chainSystem);
 
         System.out.println("-----------------------ADDING BUTTON----------------------------");
         chainSystem.addConcreteButton(ButtonAsGui.createButton("click me"));

@@ -1,5 +1,6 @@
 package model
 
+import enums.MsgId
 import interfaces.ILedActorModel
 import it.unibo.bls.interfaces.IObserver
 import it.unibo.blsFramework.interfaces.ILedModel
@@ -30,9 +31,9 @@ class LedActorModel(actorName: String) : ActorBasic(actorName), ILedActorModel {
     }
 
     override suspend fun actorBody(msg: ApplMessage) {
-        when (msg.msgId()) {
-            "on" -> turnOn()
-            "off" -> turnOff()
+        when (MsgId.valueOf(msg.msgId())) {
+            MsgId.ON -> turnOn()
+            MsgId.OFF -> turnOff()
         }
     }
 

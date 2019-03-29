@@ -1,6 +1,6 @@
 package appl;
 
-import applLogic.ChainLinkActor;
+import applLogic.StateMachineLinkActor;
 import interfaces.ISegChainFramework;
 import it.unibo.bls.devices.gui.ButtonAsGui;
 import it.unibo.bls.utils.Utils;
@@ -14,7 +14,7 @@ public class AddLinksMain extends MainSegChainFramework {
     public static void main(String[] args) {
         ISegChainFramework chainSystem = SegChainFramework.createTheSystem("CHAIN_SYSTEM");
 
-        systemSetup(chainSystem);
+        stateMachineSystemSetup(chainSystem);
         System.out.println("-----------------------ADDING BUTTON----------------------------");
         chainSystem.addConcreteButton(ButtonAsGui.createButton("click me"));
 
@@ -23,7 +23,7 @@ public class AddLinksMain extends MainSegChainFramework {
 
         for (int k = 1; k < 2; k++) {
             for (int i = 0; i < 5; i++) {
-                chainSystem.addChainLink(new ChainLinkActor("seg" + i + "" + k, 500));
+                chainSystem.addChainLink(new StateMachineLinkActor("seg" + i + "" + k, 500, false));
                 chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg" + i + "" + k, 20, 10, 1000 + 120 * i, 100 * k));
                 Utils.delay(2000);
             }

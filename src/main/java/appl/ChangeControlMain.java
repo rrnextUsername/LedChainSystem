@@ -12,7 +12,7 @@ public class ChangeControlMain extends MainSegChainFramework {
     public static void main(String[] args) {
         ISegChainFramework chainSystem = SegChainFramework.createTheSystem("CHAIN_SYSTEM");
 
-        systemSetup(chainSystem);
+        stateMachineSystemSetup(chainSystem);
         System.out.println("-----------------------ADDING BUTTON----------------------------");
         chainSystem.addConcreteButton(ButtonAsGui.createButton("click me"));
 
