@@ -24,21 +24,6 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName), IC
         return ApplMessage(MsgId.OFF.name, "dispatch", sender, receiver, MsgId.OFF.name, count.toString())
     }
 
-    fun MsgUtil.suspendMsg(sender: String, receiver: String): ApplMessage {
-        count++
-        return ApplMessage(MsgId.SUSPEND.name, "dispatch", sender, receiver, MsgId.SUSPEND.name, count.toString())
-    }
-
-    fun MsgUtil.resumeMsg(sender: String, receiver: String): ApplMessage {
-        count++
-        return ApplMessage(MsgId.RESUME.name, "dispatch", sender, receiver, MsgId.RESUME.name, count.toString())
-    }
-
-    fun MsgUtil.startMsg(sender: String, receiver: String): ApplMessage {
-        count++
-        return ApplMessage(MsgId.START.name, "dispatch", sender, receiver, MsgId.START.name, count.toString())
-    }
-
     fun MsgUtil.activateMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage(MsgId.ACTIVATE.name, "dispatch", sender, receiver, MsgId.ACTIVATE.name, count.toString())
@@ -47,11 +32,6 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName), IC
     fun MsgUtil.deactivateMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage(MsgId.DEACTIVATE.name, "dispatch", sender, receiver, MsgId.DEACTIVATE.name, count.toString())
-    }
-
-    fun MsgUtil.stopMsg(sender: String, receiver: String): ApplMessage {
-        count++
-        return ApplMessage(MsgId.STOP.name, "dispatch", sender, receiver, MsgId.STOP.name, count.toString())
     }
 
     fun MsgUtil.doneMsg(sender: String, receiver: String): ApplMessage {

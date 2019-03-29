@@ -9,10 +9,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 
-class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainActor(linkName) {
+class ChainLinkActor(linkName: String, private val delay: Int, var hasToken: Boolean = false) :
+    AbstractChainActor(linkName) {
 
-    override var state: LinkState = LinkState.STOPPED
-    var hasToken: Boolean = false
+    override var state: LinkState = LinkState.SLEEP
 
     override var ledModel: SendChannel<ApplMessage>? = null
     //var doSendOff = false
@@ -20,8 +20,8 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
     override suspend fun actorBody(msg: ApplMessage) {
         when (MsgId.valueOf(msg.msgId())) {
-            MsgId.START -> startReceived(msg)
-            MsgId.STOP -> stopReceived(msg)
+            MsgId.ACTIVATE -> startReceived(msg)
+            MsgId.DEACTIVATE -> stopReceived(msg)
 
             MsgId.ON -> onReceived(msg)
             MsgId.OFF -> offReceived(msg)
@@ -32,13 +32,13 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
 
     suspend fun clickReceived(msg: ApplMessage) {
 
-        if (state == LinkState.STARTED) {
-            autoMsg(MsgUtil.stopMsg(name, name))
+        if (state == LinkState.LIVE) {
+            autoMsg(MsgUtil.deactivateMsg(name, name))
 
             //stopReceived(msg)
             //ledModel!!.turnOff()
         } else {
-            autoMsg(MsgUtil.startMsg(name, name))
+            autoMsg(MsgUtil.activateMsg(name, name))
 
             //startReceived(msg)
             //ledModel!!.turnOn()
@@ -46,12 +46,12 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     suspend fun startReceived(msg: ApplMessage) {
-        if (state == LinkState.STARTED) {
+        if (state == LinkState.LIVE) {
             return
         }
 
-        state = LinkState.STARTED
-        prev!!.send(MsgUtil.startMsg(name, "prev"))
+        state = LinkState.LIVE
+        prev!!.send(MsgUtil.activateMsg(name, "prev"))
         //next!!.send(MsgUtil.startMsg(name, "next"))
 
         if (hasToken) {
@@ -61,22 +61,22 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     suspend fun stopReceived(msg: ApplMessage) {
-        if (state == LinkState.STOPPED) {
+        if (state == LinkState.SLEEP) {
             return
         }
 
-        state = LinkState.STOPPED
+        state = LinkState.SLEEP
         // doSendOff = false
-        prev!!.send(MsgUtil.stopMsg(name, "prev"))
+        prev!!.send(MsgUtil.deactivateMsg(name, "prev"))
         //next!!.send(MsgUtil.stopMsg(name, "next"))
     }
 
     suspend fun onReceived(msg: ApplMessage) {
-        if (state == LinkState.STARTED) {
+        if (state == LinkState.LIVE) {
             return
         }
 
-        state = LinkState.STARTED
+        state = LinkState.LIVE
     }
 
     suspend fun offReceived(msg: ApplMessage) {
@@ -86,7 +86,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
     }
 
     suspend fun applLogic() {
-        if (state == LinkState.STOPPED)
+        if (state == LinkState.SLEEP)
             return
 
         turnOnLed()
@@ -96,7 +96,7 @@ class ChainLinkActor(linkName: String, private val delay: Int) : AbstractChainAc
             //doSendOff = true
             Utils.delay(delay)
 
-            if (state == LinkState.STARTED) {
+            if (state == LinkState.LIVE) {
                 turnOffLed()
 
                 next!!.send(MsgUtil.offMsg(name, "next"))

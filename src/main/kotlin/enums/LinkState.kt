@@ -7,8 +7,4 @@ enum class LinkState {
     PASSING_TOKEN,
     SLEEP,
     LIVE,
-
-    //ChainActor
-    STOPPED,
-    STARTED;
 }

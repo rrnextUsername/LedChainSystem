@@ -2,10 +2,13 @@ package appl;
 
 import applLogic.ChainLinkActor;
 import applLogic.StateMachineLinkActor;
+import enums.MsgId;
 import interfaces.IChainActor;
 import interfaces.ILedActorModel;
 import interfaces.ISegChainFramework;
 import it.unibo.bls.utils.Utils;
+import it.unibo.kactor.ApplMessage;
+import it.unibo.kactor.MsgUtil;
 import model.LedActorModel;
 import segments.LedSegmentAdapter;
 
@@ -19,7 +22,7 @@ public class MainSegChainFramework extends SegChainFramework {
 
 
         //the first one is automatically set up for receiving button clicked messages
-        IChainActor actor1 = new ChainLinkActor("seg1", delay);
+        IChainActor actor1 = new ChainLinkActor("seg1", delay, true);
         ILedActorModel ledModel = LedActorModel.Companion.createLed(actor1.getName());
         actor1.setLedModel(ledModel.getChannel());
         chainSystem.addChainLink(actor1);
@@ -27,16 +30,16 @@ public class MainSegChainFramework extends SegChainFramework {
         chainSystem.addConcreteLed(chainSystem.getLinkAt(0), new LedSegmentAdapter("seg1", 20, 10, 1000, 0));
 
         //the creation of the LedModels can be left to the framework
-        chainSystem.addChainLink(new ChainLinkActor("seg2", delay));
+        chainSystem.addChainLink(new ChainLinkActor("seg2", delay, false));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg2", 20, 10, 1120, 0));
 
-        chainSystem.addChainLink(new ChainLinkActor("seg3", delay));
+        chainSystem.addChainLink(new ChainLinkActor("seg3", delay, false));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg3", 20, 10, 1240, 0));
 
-        chainSystem.addChainLink(new ChainLinkActor("seg4", delay));
+        chainSystem.addChainLink(new ChainLinkActor("seg4", delay, false));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg4", 20, 10, 1360, 0));
 
-        chainSystem.addChainLink(new ChainLinkActor("seg5", delay));
+        chainSystem.addChainLink(new ChainLinkActor("seg5", delay, false));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg5", 20, 10, 1480, 0));
     }
 
@@ -70,12 +73,15 @@ public class MainSegChainFramework extends SegChainFramework {
 
         ISegChainFramework chainSystem = SegChainFramework.createTheSystem("CHAIN_SYSTEM");
 
-        MainSegChainFramework.stateMachineSystemSetup(chainSystem);
+        stateMachineSystemSetup(chainSystem);
+        //MainSegChainFramework.systemSetup(chainSystem);
 
         System.out.println("-----------------------TESTING START/STOP----------------------------");
-        //MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE., chainSystem.getFirstLink().getChannel());
-        Utils.delay(6000);
-        // MsgUtil.INSTANCE.forward(MsgUtil.INSTANCE.stoptMsg(), chainSystem.getFirstLink().getChannel());
+        MsgUtil.INSTANCE.forward(new ApplMessage(MsgId.ACTIVATE.name(), "dispatch", "main", "buttonControl", MsgId.ACTIVATE.name(), "0"), chainSystem.getFirstLink().getChannel());
+        Utils.delay(10000);
+        MsgUtil.INSTANCE.forward(new ApplMessage(MsgId.DEACTIVATE.name(), "dispatch", "main", "buttonControl", MsgId.DEACTIVATE.name(), "0"), chainSystem.getFirstLink().getChannel());
+
+
     }
 
 
