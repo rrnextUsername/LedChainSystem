@@ -15,7 +15,7 @@ public class LedSegmentAdapter extends LedSegment {
 
         frame = new JFrame();
         frame.setName(name);
-        frame.setSize(width, height * 10);
+        frame.setSize(width*6, height * 10);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocation(x, y);
 

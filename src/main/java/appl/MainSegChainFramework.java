@@ -27,7 +27,7 @@ public class MainSegChainFramework extends SegChainFramework {
         actor1.setLedModel(ledModel.getChannel());
         chainSystem.addChainLink(actor1);
         chainSystem.addLedModel(ledModel);
-        chainSystem.addConcreteLed(chainSystem.getLinkAt(0), new LedSegmentAdapter("seg1", 20, 10, 1000, 0));
+        chainSystem.addConcreteLed(chainSystem.getLinkAt(0), new LedSegmentAdapter("seg1", 20, 10, 100, 0));
 
         //the creation of the LedModels can be left to the framework
         chainSystem.addChainLink(new ChainLinkActor("seg2", delay, false));
@@ -41,6 +41,7 @@ public class MainSegChainFramework extends SegChainFramework {
 
         chainSystem.addChainLink(new ChainLinkActor("seg5", delay, false));
         chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg5", 20, 10, 1480, 0));
+
     }
 
     public static void systemSetup(ISegChainFramework chainSystem) {
@@ -76,12 +77,18 @@ public class MainSegChainFramework extends SegChainFramework {
         stateMachineSystemSetup(chainSystem);
         //MainSegChainFramework.systemSetup(chainSystem);
 
+
+        for (int k = 1; k < 2; k++) {
+            for (int i = 0; i < 5; i++) {
+                chainSystem.addChainLink(new ChainLinkActor("seg"+i+""+k, 500));
+                chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg"+i+""+k, 20, 10,100+150*i,200*k));
+                Utils.delay(1000);
+            }
+        }
         System.out.println("-----------------------TESTING START/STOP----------------------------");
         MsgUtil.INSTANCE.forward(new ApplMessage(MsgId.ACTIVATE.name(), "dispatch", "main", "buttonControl", MsgId.ACTIVATE.name(), "0"), chainSystem.getFirstLink().getChannel());
         Utils.delay(10000);
         MsgUtil.INSTANCE.forward(new ApplMessage(MsgId.DEACTIVATE.name(), "dispatch", "main", "buttonControl", MsgId.DEACTIVATE.name(), "0"), chainSystem.getFirstLink().getChannel());
-
-
     }
 
 
