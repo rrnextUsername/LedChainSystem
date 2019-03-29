@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="it.unibo.bls19.kactor">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/libs/it.unibo.bls19.kactor.jar!/" />
+    </SOURCES>
+  </library>
+</component>
