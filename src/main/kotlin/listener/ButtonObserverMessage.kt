@@ -3,22 +3,26 @@ package listener
 import enums.MsgId
 import interfaces.IObservableMessage
 import it.unibo.bls.interfaces.IObserver
-import it.unibo.kactor.ApplMessage
-import it.unibo.kactor.MsgUtil
+import it.unibo.kactor.ActorBasic
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ButtonObserverMessage : IObserver, IObservableMessage {
+class ButtonObserverMessage(name: String) : ActorBasic(name), IObserver, IObservableMessage {
 
-    private val observers: ArrayList<SendChannel<ApplMessage>> = ArrayList()
+    override suspend fun actorBody(msg: it.unibo.kactor.ApplMessage) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private val observers: ArrayList<ActorBasic> = ArrayList()
     private var clickCount = 0
 
 
-    override fun addObserver(channel: SendChannel<ApplMessage>) {
-        observers.add(channel)
+    override fun addObserver(actor: ActorBasic) {
+        observers.add(actor)
     }
 
     fun getNumOfClicks(): Int {
@@ -28,11 +32,8 @@ class ButtonObserverMessage : IObserver, IObservableMessage {
     @UseExperimental(ObsoleteCoroutinesApi::class)
     override fun update(source: Observable, state: Any) {
         clickCount++
-        for (channel in observers) {
-            MsgUtil.forward(
-                ApplMessage("msg(${MsgId.CLICK}, dispatch, buttonObserver, controller, $clickCount, ${MsgUtil.count})"),
-                channel
-            )
+        for (actorBasic in observers) {
+            GlobalScope.launch { forward("${MsgId.CLICK}", "$clickCount", actorBasic) }
         }
     }
 }

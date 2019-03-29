@@ -12,4 +12,8 @@ enum class MsgId {
     ON,
     OFF,
     CLICK;
+
+    override fun toString(): String {
+        return name
+    }
 }

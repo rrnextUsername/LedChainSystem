@@ -6,5 +6,9 @@ enum class LinkState {
     LIVE_TOKEN,
     PASSING_TOKEN,
     SLEEP,
-    LIVE,
+    LIVE;
+
+    override fun toString(): String {
+        return name
+    }
 }

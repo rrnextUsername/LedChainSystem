@@ -1,28 +1,32 @@
 package interfaces;
 
+import applLogic.AbstractChainActor;
 import it.unibo.bls.interfaces.ILed;
 import it.unibo.bls.interfaces.IObservable;
 import it.unibo.blsFramework.interfaces.IButtonModel;
+import it.unibo.blsFramework.interfaces.ILedModel;
 
 public interface ISegChainFramework {
     void addConcreteButton(IObservable button);
-    void addConcreteLed(IChainActor link, ILed led);
 
-    void addChainLink(IChainActor link);
+    void addConcreteLed(AbstractChainActor link, ILed led);
 
-    void addButtonObserver(IChainActor buttonControl);
+    void addChainLink(AbstractChainActor link);
 
-    void addLedModel(ILedActorModel model);
+    void addButtonObserver(AbstractChainActor buttonControl);
 
-    ILedActorModel getLedModelOf(IChainActor link);
+    void addLedModel(ILedModel model);
+
+    ILedModel getLedModelOf(AbstractChainActor link);
 
     IObservable getConcreteButton();
 
     IButtonModel getButtonModel();
 
-    IChainActor getLinkAt(int position);
+    AbstractChainActor getLinkAt(int position);
 
-    IChainActor getFirstLink();
-    IChainActor getLastLink();
+    AbstractChainActor getFirstLink();
+
+    AbstractChainActor getLastLink();
 
 }

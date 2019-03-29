@@ -1,14 +1,14 @@
 package appl;
 
+import applLogic.AbstractChainActor;
 import enums.LinkState;
-import interfaces.IChainActor;
-import interfaces.ILedActorModel;
 import interfaces.ISegChainFramework;
 import it.unibo.bls.interfaces.ILed;
 import it.unibo.bls.interfaces.IObservable;
 import it.unibo.bls.utils.Utils;
 import it.unibo.blsFramework.concreteDevices.LedObserver;
 import it.unibo.blsFramework.interfaces.IButtonModel;
+import it.unibo.blsFramework.interfaces.ILedModel;
 import it.unibo.blsFramework.interfaces.ILedObserver;
 import it.unibo.blsFramework.models.ButtonModel;
 import it.unibo.kactor.ApplMessage;
@@ -26,12 +26,12 @@ public class SegChainFramework implements ISegChainFramework {
     }
 
     private final String cmdName;
-    private List<IChainActor> chain;
-    private List<ILedActorModel> ledActorModels;
+    private List<AbstractChainActor> chain;
+    private List<ILedModel> ledActorModels;
     private ButtonObserverMessage buttonObserverMessage;
     private ButtonModel buttonModel;
     private IObservable concreteButton;
-    private IChainActor currentButtonObserver;
+    private AbstractChainActor currentButtonObserver;
 
 
     public SegChainFramework(String cmdName) {
@@ -43,7 +43,7 @@ public class SegChainFramework implements ISegChainFramework {
 
     protected void createLogicalComponents() {
         buttonModel = ButtonModel.createButton(cmdName);
-        buttonObserverMessage = new ButtonObserverMessage();
+        buttonObserverMessage = new ButtonObserverMessage("button observer");
 
         chain = new ArrayList<>();
         ledActorModels = new ArrayList<>();
@@ -61,15 +61,15 @@ public class SegChainFramework implements ISegChainFramework {
     }
 
     @Override
-    public void addConcreteLed(IChainActor link, ILed led) {
+    public void addConcreteLed(AbstractChainActor link, ILed led) {
         if (!chain.contains(link)) {
             return;
         }
 
         if (link.getLedModel() == null) {
-            ILedActorModel ledActorModel = LedActorModel.Companion.createLed(link.getName());
+            ILedModel ledActorModel = LedActorModel.Companion.createLed(link.toString());
             ledActorModels.add(ledActorModel);
-            link.setLedModel(ledActorModel.getChannel());
+            link.setLedModel((LedActorModel) ledActorModel);
         }
 
         ILedObserver ledObs = LedObserver.create();
@@ -78,7 +78,7 @@ public class SegChainFramework implements ISegChainFramework {
     }
 
     @Override
-    public void addChainLink(IChainActor link) {
+    public void addChainLink(AbstractChainActor link) {
         if (chain.isEmpty()) {
             //if the link is the first one to be added, add it to the list and connect it to the observer
             chain.add(link);
@@ -96,7 +96,7 @@ public class SegChainFramework implements ISegChainFramework {
     }
 
     @Override
-    public void addButtonObserver(IChainActor link) {
+    public void addButtonObserver(AbstractChainActor link) {
         if (chain.isEmpty()) {
             chain.add(link);
 
@@ -115,32 +115,29 @@ public class SegChainFramework implements ISegChainFramework {
     }
 
     @Override
-    public void addLedModel(ILedActorModel model) {
+    public void addLedModel(ILedModel model) {
         ledActorModels.add(model);
     }
 
     @Override
-    public ILedActorModel getLedModelOf(IChainActor link) {
-        return ledActorModels.stream().filter(model -> model.getChannel().equals(link.getLedModel())).findFirst().get();
+    public ILedModel getLedModelOf(AbstractChainActor link) {
+        return ledActorModels.stream().filter(model -> model.equals(link.getLedModel())).findFirst().get();
     }
 
-    private void addObserverLink(IChainActor link) {
+    private void addObserverLink(AbstractChainActor link) {
         currentButtonObserver = link;
-        buttonObserverMessage.addObserver(currentButtonObserver.getChannel());
+        buttonObserverMessage.addObserver(currentButtonObserver);
     }
 
-    private void addLink(IChainActor link) {
-        IChainActor last = chain.get(chain.size() - 1);
-        IChainActor first = chain.get(0);
+    private void addLink(AbstractChainActor link) {
+        AbstractChainActor last = chain.get(chain.size() - 1);
+        AbstractChainActor first = chain.get(0);
 
         chain.add(link);
-        //link.setHasToken(false); //in case the link wasn't properly set up
 
-        last.setNext(link.getChannel());
-        first.setPrev(link.getChannel());
+        last.setNext(link);
 
-        link.setPrev(last.getChannel());
-        link.setNext(first.getChannel());
+        link.setNext(first);
     }
 
     @Override
@@ -154,29 +151,29 @@ public class SegChainFramework implements ISegChainFramework {
     }
 
     @Override
-    public IChainActor getLinkAt(int position) {
+    public AbstractChainActor getLinkAt(int position) {
         return chain.get(position);
     }
 
     @Override
-    public IChainActor getFirstLink() {
+    public AbstractChainActor getFirstLink() {
         return getLinkAt(0);
     }
 
     @Override
-    public IChainActor getLastLink() {
+    public AbstractChainActor getLastLink() {
         return getLinkAt(chain.size() - 1);
     }
 
     private void sendClick() {
-        MsgUtil.INSTANCE.forward(new ApplMessage("CLICK", "dispatch", "main", "buttonControl", "CLICK", "0"), currentButtonObserver.getChannel());
+        MsgUtil.INSTANCE.sendMsg(new ApplMessage("CLICK", "dispatch", "main", "buttonControl", "CLICK", "0"), currentButtonObserver);
     }
 
     private void sendStart() {
-        MsgUtil.INSTANCE.forward(new ApplMessage("ACTIVATE", "dispatch", "main", "buttonControl", "ACTIVATE", "0"), currentButtonObserver.getChannel());
+        MsgUtil.INSTANCE.sendMsg(new ApplMessage("ACTIVATE", "dispatch", "main", "buttonControl", "ACTIVATE", "0"), currentButtonObserver);
     }
 
     private void sendStop() {
-        MsgUtil.INSTANCE.forward(new ApplMessage("DEACTIVATE", "dispatch", "main", "buttonControl", "DEACTIVATE", "0"), currentButtonObserver.getChannel());
+        MsgUtil.INSTANCE.sendMsg(new ApplMessage("DEACTIVATE", "dispatch", "main", "buttonControl", "DEACTIVATE", "0"), currentButtonObserver);
     }
 }

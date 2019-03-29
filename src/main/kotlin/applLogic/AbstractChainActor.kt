@@ -1,16 +1,34 @@
 package applLogic
 
+import enums.LinkState
 import enums.MsgId
-import interfaces.IChainActor
 import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
-import kotlinx.coroutines.channels.SendChannel
+import model.LedActorModel
 
-abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName), IChainActor {
+abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
 
-    override var next: SendChannel<ApplMessage>? = null
-    override var prev: SendChannel<ApplMessage>? = null
+    lateinit var next: ActorBasic
+    var ledModel: LedActorModel? = null
+
+    var state: LinkState = LinkState.SLEEP
+
+
+    override fun toString(): String {
+        return name
+    }
+
+
+    //error in the underlying logic, turnOn->off and turnOff->on :P
+    suspend fun turnOnLed() {
+        forward("${MsgId.OFF}", "turn off led", ledModel!!)
+    }
+
+    suspend fun turnOffLed() {
+        forward("${MsgId.ON}", "turn on led", ledModel!!)
+
+    }
 
     //override var state: Boolean = false
 
