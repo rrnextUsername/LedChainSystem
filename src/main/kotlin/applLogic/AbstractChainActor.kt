@@ -27,7 +27,7 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
     }
 
 
-    //error in the underlying logic, turnOn->off and turnOff->on :P
+    //error in the underlying logic, turnOn->off and turnOff->on
     suspend fun turnOnLed() {
         forward("${MsgId.OFF}", "turn off led", ledModel!!)
     }
