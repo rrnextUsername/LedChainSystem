@@ -8,7 +8,8 @@ import kotlinx.coroutines.launch
 import stateMachine.LinkState
 import stateMachine.MsgId
 
-open class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = false) : AbstractChainActor(name) {
+open class StateMachineLinkActor(name: String, private val delay: Int, isHead: Boolean = false) :
+    AbstractChainActor(name) {
 
     init {
         if (isHead)
@@ -239,7 +240,7 @@ open class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean =
     }
 
     override suspend fun actorBody(msg: ApplMessage) {
-        transitionTable.action(state, MsgId.valueOf(msg.msgId())).invoke()
+        transitionTable.action(state, MsgId.valueOf(msg.msgId()))()
     }
 
     private suspend fun doLiveToken() {
@@ -256,7 +257,7 @@ open class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean =
             Utils.delay(delay)
             println("Actor: $name::coroutine :::: delay over :: state=$state")
 
-            autoMsg(MsgUtil.doOffMsg(name, name))
+            autoMsg(MsgUtil.passTokenMsg(name, name))
         }
     }
 

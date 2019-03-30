@@ -14,7 +14,7 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
     var ledModel: LedActorModel? = null
 
     var state: LinkState = LinkState.SLEEP
-    val transitionTable = TransitionTable()
+    var transitionTable = TransitionTable()
 
     init {
         transitionTableSetup()
@@ -76,12 +76,12 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
         return ApplMessage(MsgId.DONE.name, "dispatch", sender, receiver, MsgId.DONE.name, count.toString())
     }
 
-    fun MsgUtil.doOnMsg(sender: String, receiver: String): ApplMessage {
+    fun MsgUtil.tokenMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage(MsgId.TOKEN.name, "dispatch", sender, receiver, MsgId.TOKEN.name, count.toString())
     }
 
-    fun MsgUtil.doOffMsg(sender: String, receiver: String): ApplMessage {
+    fun MsgUtil.passTokenMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage(MsgId.PASS_TOKEN.name, "dispatch", sender, receiver, MsgId.PASS_TOKEN.name, count.toString())
     }
