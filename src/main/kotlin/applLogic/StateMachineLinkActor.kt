@@ -7,74 +7,84 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import stateMachine.LinkState
 import stateMachine.MsgId
-import stateMachine.TransitionTable
 
-class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = false) : AbstractChainActor(name) {
-
-    private val transitionTable = TransitionTable()
+open class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = false) : AbstractChainActor(name) {
 
     init {
         if (isHead)
             state = LinkState.SLEEP_TOKEN
+    }
+
+
+    override fun transitionTableSetup() {
 
         //state transitions
         transitionTable.putAction(LinkState.LIVE_TOKEN, MsgId.DEACTIVATE) {
             doExpected(
                 MsgId.DEACTIVATE,
                 "deactivating"
-            ); doSleepToken()
+            )
+            doSleepToken()
         }
         transitionTable.putAction(LinkState.LIVE_TOKEN, MsgId.PASS_TOKEN) {
             doExpected(
                 MsgId.PASS_TOKEN,
                 "passing the token to the next link"
-            ); doPassingToken()
+            )
+            doPassingToken()
         }
 
         transitionTable.putAction(LinkState.SLEEP_TOKEN, MsgId.ACTIVATE) {
             doExpected(
                 MsgId.ACTIVATE,
                 "activating"
-            ); doLiveToken()
+            )
+            doLiveToken()
         }
 
         transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.DEACTIVATE) {
             doUnexpected(
                 MsgId.DEACTIVATE,
                 "executing to avoid token loss, possibility of extraneous messages in queue, might create double token"
-            ); doSleep()
+            )
+            doSleep()
         }
         transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.DONE) {
             doExpected(
                 MsgId.DONE,
                 "finished passing token"
-            ); doLive()
+            )
+            doLive()
         }
 
         transitionTable.putAction(LinkState.LIVE, MsgId.DEACTIVATE) {
             doExpected(
                 MsgId.DEACTIVATE,
                 "deactivating"
-            ); doSleep()
+            )
+            doSleep()
         }
         transitionTable.putAction(LinkState.LIVE, MsgId.TOKEN) {
             doExpected(
                 MsgId.TOKEN,
                 "received token from previous link"
-            ); doLiveToken()
+            )
+            doLiveToken()
         }
 
         transitionTable.putAction(LinkState.SLEEP, MsgId.ACTIVATE) {
             doExpected(
                 MsgId.ACTIVATE,
                 "activating"
-            ); doLive()
+            )
+            doLive()
         }
         transitionTable.putAction(LinkState.SLEEP, MsgId.TOKEN) {
             doUnexpected(
                 MsgId.TOKEN,
                 "executing to avoid token loss, possibility of extraneous messages in queue, might create double token"
-            ); doSleepToken()
+            )
+            doSleepToken()
         }
 
 
@@ -83,32 +93,37 @@ class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = fals
             doExpected(
                 MsgId.CLICK,
                 "received click, deactivating"
-            ); autoMsg(MsgUtil.deactivateMsg(name, name))
+            )
+            autoMsg(MsgUtil.deactivateMsg(name, name))
         }
         transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.CLICK) {
             doExpected(
                 MsgId.CLICK,
                 "received click, deactivating"
-            ); autoMsg(MsgUtil.deactivateMsg(name, name))
+            )
+            autoMsg(MsgUtil.deactivateMsg(name, name))
         }
         transitionTable.putAction(LinkState.LIVE, MsgId.CLICK) {
             doExpected(
                 MsgId.CLICK,
                 "received click, deactivating"
-            ); autoMsg(MsgUtil.deactivateMsg(name, name))
+            )
+            autoMsg(MsgUtil.deactivateMsg(name, name))
         }
 
         transitionTable.putAction(LinkState.SLEEP_TOKEN, MsgId.CLICK) {
             doExpected(
                 MsgId.CLICK,
                 "received click, activating"
-            ); autoMsg(MsgUtil.activateMsg(name, name))
+            )
+            autoMsg(MsgUtil.activateMsg(name, name))
         }
         transitionTable.putAction(LinkState.SLEEP, MsgId.CLICK) {
             doExpected(
                 MsgId.CLICK,
                 "received click, activating"
-            ); autoMsg(MsgUtil.activateMsg(name, name))
+            )
+            autoMsg(MsgUtil.activateMsg(name, name))
         }
 
         //expected messages
@@ -277,18 +292,6 @@ class StateMachineLinkActor(name: String, val delay: Int, isHead: Boolean = fals
 
         //step 1
         forward("${MsgId.DEACTIVATE}", "deactivate", next)
-    }
-
-    private fun doError(msgId: MsgId, comment: String) {
-        println(":::ERROR::: Actor: $name :::: $msgId message received :: state=$state :: $comment :::ERROR::: ")
-    }
-
-    private fun doUnexpected(msgId: MsgId, comment: String) {
-        println(":::WARNING::: Actor: $name :::: $msgId message received :: state=$state :: $comment :::WARNING:::")
-    }
-
-    private fun doExpected(msgId: MsgId, comment: String) {
-        println("Actor: $name :::: $msgId message received :: state=$state :: $comment")
     }
 
 

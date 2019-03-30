@@ -11,6 +11,10 @@ import stateMachine.MsgId
 class ChainLinkActor(linkName: String, private val delay: Int, var hasToken: Boolean = false) :
     AbstractChainActor(linkName) {
 
+
+    override fun transitionTableSetup() {
+    }
+
     override suspend fun actorBody(msg: ApplMessage) {
         when (MsgId.valueOf(msg.msgId())) {
             MsgId.ACTIVATE -> startReceived(msg)
