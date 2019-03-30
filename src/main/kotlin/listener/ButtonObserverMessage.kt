@@ -1,12 +1,12 @@
 package listener
 
-import enums.MsgId
 import interfaces.IObservableMessage
 import it.unibo.bls.interfaces.IObserver
 import it.unibo.kactor.ActorBasic
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
+import stateMachine.MsgId
 import java.util.*
 import kotlin.collections.ArrayList
 

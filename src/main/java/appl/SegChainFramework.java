@@ -1,7 +1,6 @@
 package appl;
 
 import applLogic.AbstractChainActor;
-import enums.LinkState;
 import interfaces.ISegChainFramework;
 import it.unibo.bls.interfaces.ILed;
 import it.unibo.bls.interfaces.IObservable;
@@ -15,6 +14,7 @@ import it.unibo.kactor.ApplMessage;
 import it.unibo.kactor.MsgUtil;
 import listener.ButtonObserverMessage;
 import model.LedActorModel;
+import stateMachine.LinkState;
 
 import java.util.ArrayList;
 import java.util.List;

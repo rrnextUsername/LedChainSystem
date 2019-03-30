@@ -1,12 +1,12 @@
 package applLogic
 
-import enums.LinkState
-import enums.MsgId
 import it.unibo.bls.utils.Utils
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import stateMachine.LinkState
+import stateMachine.MsgId
 
 class ChainLinkActor(linkName: String, private val delay: Int, var hasToken: Boolean = false) :
     AbstractChainActor(linkName) {

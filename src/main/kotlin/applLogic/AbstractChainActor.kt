@@ -1,11 +1,11 @@
 package applLogic
 
-import enums.LinkState
-import enums.MsgId
 import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
 import model.LedActorModel
+import stateMachine.LinkState
+import stateMachine.MsgId
 
 abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
 
@@ -59,12 +59,12 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
 
     fun MsgUtil.doOnMsg(sender: String, receiver: String): ApplMessage {
         count++
-        return ApplMessage(MsgId.DO_ON.name, "dispatch", sender, receiver, MsgId.DO_ON.name, count.toString())
+        return ApplMessage(MsgId.TOKEN.name, "dispatch", sender, receiver, MsgId.TOKEN.name, count.toString())
     }
 
     fun MsgUtil.doOffMsg(sender: String, receiver: String): ApplMessage {
         count++
-        return ApplMessage(MsgId.DO_OFF.name, "dispatch", sender, receiver, MsgId.DO_OFF.name, count.toString())
+        return ApplMessage(MsgId.PASS_TOKEN.name, "dispatch", sender, receiver, MsgId.PASS_TOKEN.name, count.toString())
     }
 
 
