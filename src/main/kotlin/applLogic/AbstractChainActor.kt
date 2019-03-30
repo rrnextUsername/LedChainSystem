@@ -6,6 +6,7 @@ import it.unibo.kactor.MsgUtil
 import model.LedActorModel
 import stateMachine.LinkState
 import stateMachine.MsgId
+import stateMachine.TransitionTable
 
 abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
 
@@ -13,7 +14,13 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
     var ledModel: LedActorModel? = null
 
     var state: LinkState = LinkState.SLEEP
+    val transitionTable = TransitionTable()
 
+    init {
+        transitionTableSetup()
+    }
+
+    abstract fun transitionTableSetup()
 
     override fun toString(): String {
         return name
@@ -28,6 +35,18 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
     suspend fun turnOffLed() {
         forward("${MsgId.ON}", "turn on led", ledModel!!)
 
+    }
+
+    protected fun doError(msgId: MsgId, comment: String) {
+        println(":::ERROR::: Actor: $name :::: $msgId message received :: state=$state :: $comment :::ERROR::: ")
+    }
+
+    protected fun doUnexpected(msgId: MsgId, comment: String) {
+        println(":::WARNING::: Actor: $name :::: $msgId message received :: state=$state :: $comment :::WARNING:::")
+    }
+
+    protected fun doExpected(msgId: MsgId, comment: String) {
+        println("Actor: $name :::: $msgId message received :: state=$state :: $comment")
     }
 
     //override var state: Boolean = false
