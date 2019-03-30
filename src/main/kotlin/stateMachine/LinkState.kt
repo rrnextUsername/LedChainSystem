@@ -1,4 +1,4 @@
-package enums
+package stateMachine
 
 enum class LinkState {
     //StateMachineChainActor

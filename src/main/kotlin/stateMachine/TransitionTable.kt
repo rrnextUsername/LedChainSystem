@@ -1,8 +1,4 @@
-package applLogic
-
-import enums.LinkState
-import enums.MsgId
-
+package stateMachine
 
 class TransitionTable {
 
@@ -11,7 +7,8 @@ class TransitionTable {
     init {
         for (state in LinkState.values()) {
             for (input in MsgId.values()) {
-                transitionTable[Pair(state, input)] = {}
+                transitionTable[Pair(state, input)] =
+                    { println("------------------ERROR:::UNHANDLED OPERATION:::ERROR------------------") }
             }
         }
     }

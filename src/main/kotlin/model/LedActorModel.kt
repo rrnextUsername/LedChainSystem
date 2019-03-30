@@ -1,11 +1,11 @@
 package model
 
-import enums.MsgId
 import it.unibo.bls.interfaces.IObserver
 import it.unibo.blsFramework.interfaces.ILedModel
 import it.unibo.blsFramework.models.LedModel
 import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.ApplMessage
+import stateMachine.MsgId
 
 class LedActorModel(actorName: String) : ActorBasic(actorName), ILedModel {
 

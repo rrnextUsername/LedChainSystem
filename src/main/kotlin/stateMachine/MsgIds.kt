@@ -1,11 +1,11 @@
-package enums
+package stateMachine
 
 enum class MsgId {
     //StateMachineChainActor
     ACTIVATE,
     DEACTIVATE,
-    DO_ON,
-    DO_OFF,
+    TOKEN,
+    PASS_TOKEN,
     DONE,
 
     //All
