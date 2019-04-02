@@ -8,7 +8,8 @@ import stateMachine.LinkState
 import stateMachine.MsgId
 import stateMachine.TransitionTable
 
-abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
+abstract class AbstractChainActor(actorName: String, channelSize: Int = 5, confined: Boolean = false) :
+    ActorBasic(actorName, channelSize, confined) {
 
     lateinit var next: ActorBasic
     var ledModel: LedActorModel? = null
@@ -29,12 +30,11 @@ abstract class AbstractChainActor(actorName: String) : ActorBasic(actorName) {
 
     //error in the underlying logic, turnOn->off and turnOff->on
     suspend fun turnOnLed() {
-        forward("${MsgId.OFF}", "turn off led", ledModel!!)
+        forward("${MsgId.OFF}", "turn on led", ledModel!!)
     }
 
     suspend fun turnOffLed() {
-        forward("${MsgId.ON}", "turn on led", ledModel!!)
-
+        forward("${MsgId.ON}", "turn off led", ledModel!!)
     }
 
     protected fun doError(msgId: MsgId, comment: String) {

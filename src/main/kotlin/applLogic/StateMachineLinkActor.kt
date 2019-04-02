@@ -9,7 +9,7 @@ import stateMachine.LinkState
 import stateMachine.MsgId
 
 open class StateMachineLinkActor(name: String, private val delay: Int, isHead: Boolean = false) :
-    AbstractChainActor(name) {
+    AbstractChainActor(name, 5, true) {
 
     init {
         if (isHead)
@@ -285,7 +285,7 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
         state = LinkState.LIVE
 
         //step 1
-        forward("${MsgId.ACTIVATE}", "deactivate", next)
+        forward("${MsgId.ACTIVATE}", "activate", next)
     }
 
     private suspend fun doSleep() {
