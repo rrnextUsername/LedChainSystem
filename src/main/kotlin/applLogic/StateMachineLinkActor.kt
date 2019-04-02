@@ -42,14 +42,6 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
             doLiveToken()
         }
 
-        transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.DEACTIVATE) {
-            doUnexpected(
-                MsgId.DEACTIVATE,
-                "executing to avoid token loss, possibility of extraneous messages in queue, might create double token"
-            )
-            doSleep()
-        }
-
         transitionTable.putAction(LinkState.LIVE, MsgId.DEACTIVATE) {
             doExpected(
                 MsgId.DEACTIVATE,
@@ -83,13 +75,6 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
 
         //click messages
         transitionTable.putAction(LinkState.LIVE_TOKEN, MsgId.CLICK) {
-            doExpected(
-                MsgId.CLICK,
-                "received click, deactivating"
-            )
-            autoMsg(MsgUtil.deactivateMsg(name, name))
-        }
-        transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.CLICK) {
             doExpected(
                 MsgId.CLICK,
                 "received click, deactivating"
@@ -167,13 +152,6 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
 
 
         //unexpected messages
-        transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.ACTIVATE) {
-            doUnexpected(
-                MsgId.ACTIVATE,
-                "chain already activated, possibility of extraneous messages in queue :: ignoring message"
-            )
-        }
-
         transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.PASS_TOKEN) {
             doUnexpected(
                 MsgId.PASS_TOKEN,
@@ -190,12 +168,6 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
             )
         }
         transitionTable.putAction(LinkState.SLEEP_TOKEN, MsgId.TOKEN) {
-            doError(
-                MsgId.TOKEN,
-                "token already present, double token in the chain :: ignoring message"
-            )
-        }
-        transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.TOKEN) {
             doError(
                 MsgId.TOKEN,
                 "token already present, double token in the chain :: ignoring message"
