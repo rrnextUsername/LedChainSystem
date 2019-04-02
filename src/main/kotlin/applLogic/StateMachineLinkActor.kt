@@ -16,7 +16,6 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
             state = LinkState.SLEEP_TOKEN
     }
 
-
     override fun transitionTableSetup() {
 
         //state transitions
@@ -49,13 +48,6 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
                 "executing to avoid token loss, possibility of extraneous messages in queue, might create double token"
             )
             doSleep()
-        }
-        transitionTable.putAction(LinkState.PASSING_TOKEN, MsgId.DONE) {
-            doExpected(
-                MsgId.DONE,
-                "finished passing token"
-            )
-            doLive()
         }
 
         transitionTable.putAction(LinkState.LIVE, MsgId.DEACTIVATE) {
@@ -189,19 +181,6 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
             )
         }
 
-        transitionTable.putAction(LinkState.LIVE, MsgId.DONE) {
-            doUnexpected(
-                MsgId.DONE,
-                "token already passed, possibility of extraneous messages in queue :: ignoring message"
-            )
-        }
-        transitionTable.putAction(LinkState.SLEEP, MsgId.DONE) {
-            doUnexpected(
-                MsgId.DONE,
-                "token already passed, possibility of extraneous messages in queue :: ignoring message"
-            )
-        }
-
 
         //error handling
         transitionTable.putAction(LinkState.LIVE_TOKEN, MsgId.TOKEN) {
@@ -222,26 +201,13 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
                 "token already present, double token in the chain :: ignoring message"
             )
         }
-
-        transitionTable.putAction(LinkState.LIVE_TOKEN, MsgId.DONE) {
-            doError(
-                MsgId.DONE,
-                "token already present, double token in the chain :: ignoring message"
-            )
-        }
-        transitionTable.putAction(LinkState.SLEEP_TOKEN, MsgId.DONE) {
-            doError(
-                MsgId.DONE,
-                "token already present, double token in the chain :: ignoring message"
-            )
-        }
-
-
     }
+
 
     override suspend fun actorBody(msg: ApplMessage) {
         transitionTable.action(state, MsgId.valueOf(msg.msgId()))()
     }
+
 
     private suspend fun doLiveToken() {
         state = LinkState.LIVE_TOKEN
@@ -278,7 +244,8 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
         forward("${MsgId.TOKEN}", "deactivate", next)
 
         //step 3
-        autoMsg(MsgUtil.doneMsg(name, name))
+        //autoMsg(MsgUtil.doneMsg(name, name))
+        doLive()
     }
 
     private suspend fun doLive() {
@@ -294,7 +261,5 @@ open class StateMachineLinkActor(name: String, private val delay: Int, isHead: B
         //step 1
         forward("${MsgId.DEACTIVATE}", "deactivate", next)
     }
-
-
 
 }

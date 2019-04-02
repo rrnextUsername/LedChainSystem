@@ -30,11 +30,13 @@ abstract class AbstractChainActor(actorName: String, channelSize: Int = 5, confi
 
     //error in the underlying logic, turnOn->off and turnOff->on
     suspend fun turnOnLed() {
-        forward("${MsgId.OFF}", "turn on led", ledModel!!)
+        if (ledModel != null)
+            forward("${MsgId.OFF}", "turn on led", ledModel!!)
     }
 
     suspend fun turnOffLed() {
-        forward("${MsgId.ON}", "turn off led", ledModel!!)
+        if (ledModel != null)
+            forward("${MsgId.ON}", "turn off led", ledModel!!)
     }
 
     protected fun doError(msgId: MsgId, comment: String) {

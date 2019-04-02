@@ -6,7 +6,6 @@ enum class MsgId {
     DEACTIVATE,
     TOKEN,
     PASS_TOKEN,
-    DONE,
 
     //All
     ON,

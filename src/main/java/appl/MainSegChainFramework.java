@@ -42,20 +42,20 @@ public class MainSegChainFramework extends SegChainFramework {
 
     public static void stateMachineSystemSetup(ISegChainFramework chainSystem, int delay) {
         chainSystem.addChainLink(new StateMachineLinkActor("seg1", delay, true));
-        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg1", 20, 10, 1000, 0));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg1", 20, 10, 200, 0));
 
         //the creation of the LedModels can be left to the framework
         chainSystem.addChainLink(new StateMachineLinkActor("seg2", delay, false));
-        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg2", 20, 10, 1120, 0));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg2", 20, 10, 320, 0));
 
         chainSystem.addChainLink(new StateMachineLinkActor("seg3", delay, false));
-        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg3", 20, 10, 1240, 0));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg3", 20, 10, 440, 0));
 
         chainSystem.addChainLink(new StateMachineLinkActor("seg4", delay, false));
-        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg4", 20, 10, 1360, 0));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg4", 20, 10, 560, 0));
 
         chainSystem.addChainLink(new StateMachineLinkActor("seg5", delay, false));
-        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg5", 20, 10, 1480, 0));
+        chainSystem.addConcreteLed(chainSystem.getLastLink(), new LedSegmentAdapter("seg5", 20, 10, 680, 0));
     }
 
     public static void stateMachineSystemSetup(ISegChainFramework chainSystem) {
