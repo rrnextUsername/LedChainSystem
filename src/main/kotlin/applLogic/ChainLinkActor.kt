@@ -17,17 +17,17 @@ class ChainLinkActor(linkName: String, private val delay: Int, var hasToken: Boo
 
     override suspend fun actorBody(msg: ApplMessage) {
         when (MsgId.valueOf(msg.msgId())) {
-            MsgId.ACTIVATE -> startReceived(msg)
-            MsgId.DEACTIVATE -> stopReceived(msg)
+            MsgId.ACTIVATE -> startReceived()
+            MsgId.DEACTIVATE -> stopReceived()
 
-            MsgId.ON -> onReceived(msg)
-            MsgId.OFF -> offReceived(msg)
+            MsgId.ON -> onReceived()
+            MsgId.OFF -> offReceived()
 
-            MsgId.CLICK -> clickReceived(msg)
+            MsgId.CLICK -> clickReceived()
         }
     }
 
-    suspend fun clickReceived(msg: ApplMessage) {
+    private suspend fun clickReceived() {
 
         if (state == LinkState.LIVE) {
             autoMsg(MsgUtil.deactivateMsg(name, name))
@@ -42,7 +42,7 @@ class ChainLinkActor(linkName: String, private val delay: Int, var hasToken: Boo
         }
     }
 
-    suspend fun startReceived(msg: ApplMessage) {
+    private suspend fun startReceived() {
         if (state == LinkState.LIVE) {
             return
         }
@@ -57,7 +57,7 @@ class ChainLinkActor(linkName: String, private val delay: Int, var hasToken: Boo
         }
     }
 
-    suspend fun stopReceived(msg: ApplMessage) {
+    private suspend fun stopReceived() {
         if (state == LinkState.SLEEP) {
             return
         }
@@ -68,7 +68,7 @@ class ChainLinkActor(linkName: String, private val delay: Int, var hasToken: Boo
         //next!!.send(MsgUtil.stopMsg(name, "next"))
     }
 
-    suspend fun onReceived(msg: ApplMessage) {
+    private suspend fun onReceived() {
         if (state == LinkState.LIVE) {
             return
         }
@@ -76,7 +76,7 @@ class ChainLinkActor(linkName: String, private val delay: Int, var hasToken: Boo
         state = LinkState.LIVE
     }
 
-    suspend fun offReceived(msg: ApplMessage) {
+    private suspend fun offReceived() {
         hasToken = true
 
         applLogic()

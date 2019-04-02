@@ -73,11 +73,6 @@ abstract class AbstractChainActor(actorName: String, channelSize: Int = 5, confi
         return ApplMessage(MsgId.DEACTIVATE.name, "dispatch", sender, receiver, MsgId.DEACTIVATE.name, count.toString())
     }
 
-    fun MsgUtil.doneMsg(sender: String, receiver: String): ApplMessage {
-        count++
-        return ApplMessage(MsgId.DONE.name, "dispatch", sender, receiver, MsgId.DONE.name, count.toString())
-    }
-
     fun MsgUtil.tokenMsg(sender: String, receiver: String): ApplMessage {
         count++
         return ApplMessage(MsgId.TOKEN.name, "dispatch", sender, receiver, MsgId.TOKEN.name, count.toString())
