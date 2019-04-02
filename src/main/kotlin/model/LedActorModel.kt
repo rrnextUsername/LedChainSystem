@@ -14,6 +14,7 @@ class LedActorModel(actorName: String) : ActorBasic(actorName), ILedModel {
         when (MsgId.valueOf(msg.msgId())) {
             MsgId.ON -> turnOn()
             MsgId.OFF -> turnOff()
+            else -> println("NON RECOGNIZED MESSAGE")
         }
     }
 
