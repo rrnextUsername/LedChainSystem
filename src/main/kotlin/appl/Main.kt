@@ -1,6 +1,0 @@
-package appl
-
-fun main() {
-
-
-}
