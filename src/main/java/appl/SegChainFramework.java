@@ -43,7 +43,7 @@ public class SegChainFramework implements ISegChainFramework {
 
     protected void createLogicalComponents() {
         buttonModel = ButtonModel.createButton(cmdName);
-        buttonObserverMessage = new ButtonObserverMessage("button observer");
+        buttonObserverMessage = new ButtonObserverMessage("buttonObserver");
 
         chain = new ArrayList<>();
         ledActorModels = new ArrayList<>();

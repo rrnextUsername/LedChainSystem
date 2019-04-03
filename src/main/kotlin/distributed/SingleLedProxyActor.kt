@@ -38,7 +38,7 @@ class SingleLedProxyActor(
 
     override suspend fun actorBody(msg: ApplMessage) {
         currentMsg = msg
-        transitionTable.action(state, MsgId.valueOf(msg.msgId()))
+        transitionTable.action(state, MsgId.valueOf(msg.msgId()))()
     }
 
 }

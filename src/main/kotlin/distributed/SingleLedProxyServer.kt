@@ -34,7 +34,7 @@ class SingleLedProxyServer(name: String, val protocol: Protocol, val portNum: In
     }
 
     override suspend fun actorBody(msg: ApplMessage) {
-        transitionTable.action(state, MsgId.valueOf(msg.msgId()))
+        transitionTable.action(state, MsgId.valueOf(msg.msgId()))()
     }
 
     private fun waitForConnection() {
